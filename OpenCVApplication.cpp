@@ -587,16 +587,18 @@ void detectLines()
 		
 		getBorderBoxes(points, tl, tr, bl, br);
 
+		printf("img resized size %d %d", imgResized.rows, imgResized.cols);
 		Mat newImg(imgResized.rows, imgResized.cols, CV_8UC1, Scalar(255));
 		Point2f sourcePoints[4] = { tl, tr, bl, br };
 
 		Mat transform = transform_perspective(imgResized, sourcePoints, size);
 		Mat t = perspectiveProjection(imgResized, sourcePoints, size);
 
-		circle(newImg, bl, 2, Scalar(0), 2, 8, 0);
-		circle(newImg, br, 2, Scalar(40), 2, 8, 0);
-		circle(newImg, tl, 2, Scalar(80), 2, 8, 0);
+		// circle(newImg, bl, 2, Scalar(0), 2, 8, 0);
+		// circle(newImg, br, 2, Scalar(40), 2, 8, 0);
+		// circle(newImg, tl, 2, Scalar(0), 2, 8, 0);
 		circle(newImg, tr, 2, Scalar(120), 2, 8, 0);
+		circle(newImg, Point(900, 10), 5, Scalar(0), 2, 8, 0);
 
 		std::cout << tl << " " << tr << " " << bl << " " << br << std::endl;
 		// // Apply Hough Transform

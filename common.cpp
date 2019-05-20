@@ -341,7 +341,6 @@ Mat removeRedColor(Mat source, int colorMin, int colorMax)
 	{
 		for (int j = 0; j < dest.cols; j++)
 		{
-
 			Vec3b color = dest.at<Vec3b>(i, j);
 
 			if (color[2] > 55 && color[2] < 120)
@@ -2149,17 +2148,17 @@ std::vector<Mat> computeModuleAndDirection(Mat img, int type)
 
 	switch (type)
 	{
-		case 0:
-			fxfy = computeGradientWithPrewitt(img);
-			break;
-		case 1:
-			fxfy = computeGradientWithRobertCross(img);
-			break;
-		case 2:
-			fxfy = computeGradientWithSobel(img);
-			break;
-		default:
-			fxfy = computeGradientWithSobel(img);
+	case 0:
+		fxfy = computeGradientWithPrewitt(img);
+		break;
+	case 1:
+		fxfy = computeGradientWithRobertCross(img);
+		break;
+	case 2:
+		fxfy = computeGradientWithSobel(img);
+		break;
+	default:
+		fxfy = computeGradientWithSobel(img);
 	}
 
 	Mat moduleGradient(img.rows, img.cols, CV_8UC1, Scalar(0));
@@ -2170,15 +2169,16 @@ std::vector<Mat> computeModuleAndDirection(Mat img, int type)
 	{
 		for (int c = 0; c < img.cols; c++)
 		{
-			moduleGradient.at<uchar>(r, c) = getValidColor((int)std::sqrt(fxfy[0].at<uchar>(r, c) * fxfy[0].at<uchar>(r, c) + fxfy[1].at<uchar>(r, c) * fxfy[1].at<uchar>(r, c)));
-			float teta = std::atan2(fxfy[1].at <uchar> (r, c), fxfy[0].at<uchar>(r, c));
+			moduleGradient.at<uchar>(r, c) = getValidColor((int)std::sqrt(
+				fxfy[0].at<uchar>(r, c) * fxfy[0].at<uchar>(r, c) + fxfy[1].at<uchar>(r, c) * fxfy[1].at<uchar>(r, c)));
+			float teta = std::atan2(fxfy[1].at<uchar>(r, c), fxfy[0].at<uchar>(r, c));
 			int dir = 0;
 			if ((teta > 3 * PI / 8 && teta < 5 * PI / 8) || (teta > -5 * PI / 8 && teta < -3 * PI / 8)) dir = 0;
 			if ((teta > PI / 8 && teta < 3 * PI / 8) || (teta > -7 * PI / 8 && teta < -5 * PI / 8)) dir = 1;
 			if ((teta > -PI / 8 && teta < PI / 8) || teta > 7 * PI / 8 && teta < -7 * PI / 8) dir = 2;
 			if ((teta > 5 * PI / 8 && teta < 7 * PI / 8) || (teta > -3 * PI / 8 && teta < -PI / 8)) dir = 3;
 
-			directionGradient.at<uchar>(r,c) = dir;
+			directionGradient.at<uchar>(r, c) = dir;
 		}
 	}
 
@@ -2186,7 +2186,6 @@ std::vector<Mat> computeModuleAndDirection(Mat img, int type)
 	res.push_back(directionGradient);
 
 	return res;
-
 }
 
 
@@ -2195,12 +2194,12 @@ Mat imageFixedBinarisation(Mat img, float p)
 	std::vector<Mat> res = computeModuleAndDirection(img, 0);
 
 	int hist[256];
-	for (int i = 0 ; i < 256; i++)
+	for (int i = 0; i < 256; i++)
 	{
 		hist[i] = 0;
 	}
 
-	for (int r = 0 ; r < img.rows; r++)
+	for (int r = 0; r < img.rows; r++)
 	{
 		for (int c = 0; c < img.cols; c++)
 		{
@@ -2236,27 +2235,30 @@ Mat cannyAlgorithm(Mat img)
 
 	// imshow("Mod", modAndDir[0]);
 
-	
 
 	for (int r = 1; r < img.rows - 1; r++)
 	{
-		for (int c = 1 ; c < img.cols; c++)
+		for (int c = 1; c < img.cols; c++)
 		{
 			bool isMaxim = false;
 
-			switch (modAndDir[1].at<uchar>(r,c))
+			switch (modAndDir[1].at<uchar>(r, c))
 			{
 			case 0:
-				isMaxim = (modAndDir[0].at<uchar>(r - 1, c) < modAndDir[0].at<uchar>(r, c) && modAndDir[0].at<uchar>(r + 1, c) < modAndDir[0].at<uchar>(r, c));
+				isMaxim = (modAndDir[0].at<uchar>(r - 1, c) < modAndDir[0].at<uchar>(r, c) && modAndDir[0].at<uchar
+				>(r + 1, c) < modAndDir[0].at<uchar>(r, c));
 				break;
 			case 1:
-				isMaxim = (modAndDir[0].at<uchar>(r - 1, c + 1) < modAndDir[0].at<uchar>(r, c) && modAndDir[0].at<uchar>(r + 1, c - 1) < modAndDir[0].at<uchar>(r, c));
+				isMaxim = (modAndDir[0].at<uchar>(r - 1, c + 1) < modAndDir[0].at<uchar>(r, c) && modAndDir[0].at<uchar
+				>(r + 1, c - 1) < modAndDir[0].at<uchar>(r, c));
 				break;
 			case 2:
-				isMaxim = (modAndDir[0].at<uchar>(r, c - 1) < modAndDir[0].at<uchar>(r, c) && modAndDir[0].at<uchar>(r, c + 1) < modAndDir[0].at<uchar>(r, c));
+				isMaxim = (modAndDir[0].at<uchar>(r, c - 1) < modAndDir[0].at<uchar>(r, c) && modAndDir[0].at<uchar
+				>(r, c + 1) < modAndDir[0].at<uchar>(r, c));
 				break;
 			case 3:
-				isMaxim = (modAndDir[0].at<uchar>(r - 1, c - 1) < modAndDir[0].at<uchar>(r, c) && modAndDir[0].at<uchar>(r + 1, c + 1) < modAndDir[0].at<uchar>(r, c));
+				isMaxim = (modAndDir[0].at<uchar>(r - 1, c - 1) < modAndDir[0].at<uchar>(r, c) && modAndDir[0].at<uchar
+				>(r + 1, c + 1) < modAndDir[0].at<uchar>(r, c));
 				break;
 			}
 
@@ -2283,10 +2285,13 @@ float filter(Mat source, Mat mask, int row, int col, bool uh)
 			int r = row + u - hs_r;
 			int c = col + v - hs_c;
 			if (isInside(source, r, c))
-			{	
-				if (uh) {
+			{
+				if (uh)
+				{
 					out += (mask.at<float>(u, v) * source.at<uchar>(r, c));
-				} else {
+				}
+				else
+				{
 					out += (mask.at<float>(u, v) * source.at<float>(r, c));
 				}
 			}
@@ -2368,9 +2373,9 @@ void harrisCorners(Mat source, float k)
 	imshow("Img gray", gray);
 	imshow("Original image", source);
 
-	float sobel_x[9] = { -1.0f, 0.0f, 1.0f, -2.0f, 0.0f, 2.0f, -1.0f, 0.0f, 1.0f };
-	float sobel_y[9] = { -1.0f, -2.0f, -1.0f, 0.0, 0.0f, 0.0f, 1.0f, 2.0f, 1.0f };
-	float sum_mask[9] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+	float sobel_x[9] = {-1.0f, 0.0f, 1.0f, -2.0f, 0.0f, 2.0f, -1.0f, 0.0f, 1.0f};
+	float sobel_y[9] = {-1.0f, -2.0f, -1.0f, 0.0, 0.0f, 0.0f, 1.0f, 2.0f, 1.0f};
+	float sum_mask[9] = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
 
 	Mat mask_x(3, 3, CV_32FC1, sobel_x);
 	Mat mask_y(3, 3, CV_32FC1, sobel_y);
@@ -2414,7 +2419,7 @@ void harrisCorners(Mat source, float k)
 	{
 		for (int c = 0; c < harris.cols; c++)
 		{
-			if (harris.at<float>(r,c) > threshold)
+			if (harris.at<float>(r, c) > threshold)
 			{
 				Point p(c, r);
 				corners.push_back(p);
@@ -2422,9 +2427,8 @@ void harrisCorners(Mat source, float k)
 		}
 	}
 
-	for (auto p: corners)
+	for (auto p : corners)
 	{
-
 		circle(source, p, 5, Scalar(0), 5, 8, 0);
 		// std::cout << p.x << " " << p.y << std::endl;
 	}
@@ -2443,7 +2447,7 @@ bool compareDiff(Point p1, Point p2)
 	return (p1.x - p1.y) < (p2.x - p2.y);
 }
 
-void getBorderBoxes(std::vector<Point> points, Point &tl, Point &tr, Point &bl, Point &br)
+void getBorderBoxes(std::vector<Point> points, Point& tl, Point& tr, Point& bl, Point& br)
 {
 	std::sort(points.begin(), points.end(), compareSum);
 
@@ -2462,45 +2466,66 @@ void getBorderBoxes(std::vector<Point> points, Point &tl, Point &tr, Point &bl, 
 	tr.y = points[points.size() - 1].y;
 }
 
-Mat perspectiveProjection(Mat source, cv::Point2f sourcePoints[4], int s)
+Mat perspectiveProjection(Mat source, cv::Point2f sourcePoints[4], int customSize)
 {
+	sourcePoints[0] = Point(sourcePoints[0].y, sourcePoints[0].x);
+	sourcePoints[1] = Point(sourcePoints[1].y, sourcePoints[1].x);
+	sourcePoints[2] = Point(sourcePoints[2].y, sourcePoints[2].x);
+	sourcePoints[3] = Point(sourcePoints[3].y, sourcePoints[3].x);
 	Point2f destinationPoints[4];
+	// destinationPoints[0] = Point2f(0, 0);
+	// destinationPoints[1] = Point2f(source.cols - 1, 0);
+	// destinationPoints[2] = Point2f(0, source.rows - 1);
+	// destinationPoints[3] = Point2f(source.cols - 1, source.rows - 1);
+
+	Size s(660, 660);
 	destinationPoints[0] = Point2f(0, 0);
-	destinationPoints[1] = Point2f(source.rows - 1, 0);
-	destinationPoints[2] = Point2f(0, source.cols - 1);
-	destinationPoints[3] = Point2f(source.rows - 1, source.cols - 1);
-
+	destinationPoints[1] = Point2f(0, s.width);
+	destinationPoints[2] = Point2f(s.height, 0);
+	destinationPoints[3] = Point2f(s.height, s.width);
 	std::ofstream fout("file.txt");
-	
-	Mat m = getPerspectiveTransform(sourcePoints, destinationPoints);
-	// // std::cout << m.type();
-	Mat mapx(source.rows, source.cols, CV_64FC1);
-	Mat mapy(source.rows, source.cols, CV_64FC1);
 
-	Mat destination(source.rows, source.cols, source.type());
-
-	for (int r = 0; r <source.rows; r++)
+	fout << "Source points \n";
+	for (int i = 0; i < 4; i++)
 	{
-		for (int c = 0; c < source.cols; c++)
+		fout <<"["<< sourcePoints[i].x <<" "<< sourcePoints[i].y << "]" << " ";
+	}
+	fout << "\nDestination points\n";
+
+	for (int i = 0; i < 4; i++)
+	{
+		fout << destinationPoints[i] << " ";
+	}
+
+
+	Mat m = getPerspectiveTransform(sourcePoints, destinationPoints);
+
+	Mat mInv = m.inv();
+	// mInv.at<double>(0, 2) += 10;
+	// mInv.at<double>(1, 2) += 20;
+	// std::cout << m.type();
+	Mat mapx(s.height, s.width, CV_32FC1);
+	Mat mapy(s.height, s.width, CV_32FC1);
+
+	Mat destination(s.height, s.width, source.type());
+
+	fout <<"\n"<< mInv<<"\n";
+	// fout << destination.rows << " " << destination.cols << "\n";
+	for (int r = 0; r < mapx.rows; r++)
+	{
+		for (int c = 0; c < mapx.cols; c++)
 		{
-			double xp =  (m.at<double>(0, 0) * r + m.at<double>(0, 1) * c + m.at<double>(0, 2)) / (m.at<double>(2, 0) * r + m.at<double>(2, 1) * c + 1);
-			double yp =  (m.at< double>(1, 0) * r + m.at<double>(1, 1) * c + m.at<double>(1, 2)) / (m.at<double>(2, 0) * r + m.at<double>(2, 1) * c + 1);
-			xp = std::abs(static_cast<int>(xp));
-			yp = std::abs(static_cast<int>(yp));
+			float xp = (mInv.at<double>(0, 0) * r + mInv.at<double>(0, 1) * c + mInv.at<double>(0, 2)) / (mInv.at<
+				double>(2, 0) * r + mInv.at<double>(2, 1) * c + 1);
+			float yp = (mInv.at<double>(1, 0) * r + mInv.at<double>(1, 1) * c + mInv.at<double>(1, 2)) / (mInv.at<
+				double>(2, 0) * r + mInv.at<double>(2, 1) * c + 1);
+			// xp = std::abs(static_cast<int>(xp));
+			// yp = std::abs(static_cast<int>(yp));
 
+			mapx.at<float>(r, c) = xp;
+			mapy.at<float>(r, c) = yp;
 
-			if (xp > source.rows - 1)
-			{
-				xp = source.rows - 1;
-			}
-			if (yp > source.cols - 1)
-			{
-				yp = source.cols - 1;
-			}
-			// mapx.at<double>(r, c) = xp;
-			// mapy.at<double>(r, c) = yp;
-
-
+			destination.at<Vec3b>(r, c) = source.at<Vec3b>((int)xp, (int)yp);
 
 			// fout << "(" << xp << "," << yp << ") ";
 			// xp = std::abs(static_cast<int>(xp));
@@ -2508,15 +2533,16 @@ Mat perspectiveProjection(Mat source, cv::Point2f sourcePoints[4], int s)
 
 			// if (isInside(source, xp, yp))
 			// {
-				destination.at<Vec3b>(r, c) = source.at<Vec3b>(xp, yp);
+			// destination.at<Vec3b>(r, c) = source.at<Vec3b>(xp, yp);
 			// }
 		}
-		// fout << "\n";
+		fout << "\n";
 	}
 
 
-	// remap(source, destination, mapx, mapy, CV_INTER_LINEAR, BORDER_REPLICATE);
-
+	Mat dt(s.height, s.width, source.type());
+	remap(source, dt, mapy, mapx, CV_INTER_LINEAR, BORDER_REPLICATE);
+	imshow("With function", dt);
 
 	return destination;
 }
