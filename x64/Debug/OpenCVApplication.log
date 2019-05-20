@@ -1,114 +1,20 @@
-﻿  common.cpp
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(186): warning C4244: '=': conversion from 'double' to '_Tp', possible loss of data
+﻿  OpenCVApplication.cpp
+d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvapplication.cpp(511): warning C4244: 'argument': conversion from 'int' to '_Tp', possible loss of data
           with
           [
               _Tp=float
           ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(187): warning C4244: '=': conversion from 'double' to '_Tp', possible loss of data
+d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvapplication.cpp(512): warning C4244: 'argument': conversion from 'int' to '_Tp', possible loss of data
           with
           [
               _Tp=float
           ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(188): warning C4244: '=': conversion from 'double' to '_Tp', possible loss of data
+d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvapplication.cpp(513): warning C4244: 'argument': conversion from 'int' to '_Tp', possible loss of data
           with
           [
               _Tp=float
           ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(219): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(222): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(239): warning C4244: 'argument': conversion from 'float' to '_Tp', possible loss of data
-          with
-          [
-              _Tp=uchar
-          ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(246): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(247): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(277): warning C4244: 'argument': conversion from '_Tp' to '_Tp', possible loss of data
-          with
-          [
-              _Tp=float
-          ]
-          and
-          [
-              _Tp=uchar
-          ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(661): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(1189): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(1204): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(1208): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(1754): warning C4244: '=': conversion from 'double' to '_Tp', possible loss of data
-          with
-          [
-              _Tp=float
-          ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(1755): warning C4244: '=': conversion from 'double' to '_Tp', possible loss of data
-          with
-          [
-              _Tp=float
-          ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(1796): warning C4244: '=': conversion from 'double' to '_Tp', possible loss of data
-          with
-          [
-              _Tp=float
-          ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(1797): warning C4244: '=': conversion from 'double' to '_Tp', possible loss of data
-          with
-          [
-              _Tp=float
-          ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(1880): warning C4474: 'printf' : too many arguments passed for format string
-  d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(1880): note: placeholders and their parameters expect 1 variadic arguments, but 2 were provided
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(1892): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(1893): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(1904): warning C4244: '=': conversion from 'double' to '_Tp', possible loss of data
-          with
-          [
-              _Tp=float
-          ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(1944): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(1945): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(1954): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(2008): warning C4474: 'printf' : too many arguments passed for format string
-  d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(2008): note: placeholders and their parameters expect 1 variadic arguments, but 2 were provided
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(2174): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(2210): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(2471): warning C4244: 'argument': conversion from '_Tp' to '_Tp', possible loss of data
-          with
-          [
-              _Tp=float
-          ]
-          and
-          [
-              _Tp=int
-          ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(2472): warning C4244: 'argument': conversion from '_Tp' to '_Tp', possible loss of data
-          with
-          [
-              _Tp=float
-          ]
-          and
-          [
-              _Tp=int
-          ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(2473): warning C4244: 'argument': conversion from '_Tp' to '_Tp', possible loss of data
-          with
-          [
-              _Tp=float
-          ]
-          and
-          [
-              _Tp=int
-          ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(2474): warning C4244: 'argument': conversion from '_Tp' to '_Tp', possible loss of data
-          with
-          [
-              _Tp=float
-          ]
-          and
-          [
-              _Tp=int
-          ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(2483): warning C4244: 'argument': conversion from '_Tp' to '_Tp', possible loss of data
+d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvapplication.cpp(596): warning C4244: 'argument': conversion from '_Tp' to '_Tp', possible loss of data
           with
           [
               _Tp=int
@@ -117,7 +23,7 @@ d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.c
           [
               _Tp=float
           ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(2484): warning C4244: 'argument': conversion from '_Tp' to '_Tp', possible loss of data
+d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvapplication.cpp(598): warning C4244: 'argument': conversion from '_Tp' to '_Tp', possible loss of data
           with
           [
               _Tp=int
@@ -126,26 +32,7 @@ d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.c
           [
               _Tp=float
           ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(2485): warning C4244: 'argument': conversion from '_Tp' to '_Tp', possible loss of data
-          with
-          [
-              _Tp=int
-          ]
-          and
-          [
-              _Tp=float
-          ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(2518): warning C4244: 'initializing': conversion from '_Tp' to 'float', possible loss of data
-          with
-          [
-              _Tp=double
-          ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(2520): warning C4244: 'initializing': conversion from '_Tp' to 'float', possible loss of data
-          with
-          [
-              _Tp=double
-          ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\common.cpp(500): warning C4715: 'reduceGrayLevels': not all control paths return a value
+d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvapplication.cpp(702): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   OpenCVApplication.vcxproj -> D:\MyWorkSpace\Image Processing\ChessBoardDetection\ChessBoardDetection\x64\Debug\OpenCVApplication.exe
   OpenCV\dll\Debug\opencv_ffmpeg340_64.dll
   OpenCV\dll\Debug\opencv_world340d.dll

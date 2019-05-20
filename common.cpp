@@ -2468,39 +2468,38 @@ void getBorderBoxes(std::vector<Point> points, Point& tl, Point& tr, Point& bl, 
 
 Mat perspectiveProjection(Mat source, cv::Point2f sourcePoints[4], int customSize)
 {
-	sourcePoints[0] = Point(sourcePoints[0].y, sourcePoints[0].x);
-	sourcePoints[1] = Point(sourcePoints[1].y, sourcePoints[1].x);
-	sourcePoints[2] = Point(sourcePoints[2].y, sourcePoints[2].x);
-	sourcePoints[3] = Point(sourcePoints[3].y, sourcePoints[3].x);
-	Point2f destinationPoints[4];
-	// destinationPoints[0] = Point2f(0, 0);
-	// destinationPoints[1] = Point2f(source.cols - 1, 0);
-	// destinationPoints[2] = Point2f(0, source.rows - 1);
-	// destinationPoints[3] = Point2f(source.cols - 1, source.rows - 1);
+	cv::Point2f sourceMock[4];
+	sourceMock[0] = Point(sourcePoints[0].y + 10, sourcePoints[0].x + 10);
+	sourceMock[1] = Point(sourcePoints[1].y + 10, sourcePoints[1].x + 60);
+	sourceMock[2] = Point(sourcePoints[2].y + 60, sourcePoints[2].x + 10);
+	sourceMock[3] = Point(sourcePoints[3].y + 60, sourcePoints[3].x + 60);
 
-	Size s(660, 660);
+	Point2f destinationPoints[4];
+
+	Size s(640, 640);
 	destinationPoints[0] = Point2f(0, 0);
 	destinationPoints[1] = Point2f(0, s.width);
 	destinationPoints[2] = Point2f(s.height, 0);
 	destinationPoints[3] = Point2f(s.height, s.width);
 	std::ofstream fout("file.txt");
 
-	fout << "Source points \n";
-	for (int i = 0; i < 4; i++)
-	{
-		fout <<"["<< sourcePoints[i].x <<" "<< sourcePoints[i].y << "]" << " ";
-	}
-	fout << "\nDestination points\n";
+	// fout << "Source points \n";
+	// for (int i = 0; i < 4; i++)
+	// {
+	// 	fout <<"["<< sourcePoints[i].x <<" "<< sourcePoints[i].y << "]" << " ";
+	// }
+	// fout << "\nDestination points\n";
+	//
+	// for (int i = 0; i < 4; i++)
+	// {
+	// 	fout << destinationPoints[i] << " ";
+	// }
 
-	for (int i = 0; i < 4; i++)
-	{
-		fout << destinationPoints[i] << " ";
-	}
 
-
-	Mat m = getPerspectiveTransform(sourcePoints, destinationPoints);
-
+	Mat m = getPerspectiveTransform(sourceMock, destinationPoints);
 	Mat mInv = m.inv();
+	std::cout << "Ps:" << mInv;
+
 	// mInv.at<double>(0, 2) += 10;
 	// mInv.at<double>(1, 2) += 20;
 	// std::cout << m.type();
@@ -2509,7 +2508,7 @@ Mat perspectiveProjection(Mat source, cv::Point2f sourcePoints[4], int customSiz
 
 	Mat destination(s.height, s.width, source.type());
 
-	fout <<"\n"<< mInv<<"\n";
+	// fout <<"\n"<< mInv<<"\n";
 	// fout << destination.rows << " " << destination.cols << "\n";
 	for (int r = 0; r < mapx.rows; r++)
 	{
@@ -2528,13 +2527,7 @@ Mat perspectiveProjection(Mat source, cv::Point2f sourcePoints[4], int customSiz
 			destination.at<Vec3b>(r, c) = source.at<Vec3b>((int)xp, (int)yp);
 
 			// fout << "(" << xp << "," << yp << ") ";
-			// xp = std::abs(static_cast<int>(xp));
-			// yp = std::abs(static_cast<int>(yp));
 
-			// if (isInside(source, xp, yp))
-			// {
-			// destination.at<Vec3b>(r, c) = source.at<Vec3b>(xp, yp);
-			// }
 		}
 		fout << "\n";
 	}

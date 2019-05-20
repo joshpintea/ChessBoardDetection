@@ -8,6 +8,8 @@
 #include <fstream>
 #include <iostream>
 #include <experimental/filesystem>
+#include "PerspectiveProjection.h"
+
 using namespace std;
 
 void testOpenImage()
@@ -511,7 +513,7 @@ Mat transform_perspective(Mat source, cv::Point2f sourcePoints[4], int s)
 	destinationPoints[3] = Point2f(s, s);
 
 
-	// std::cout <<"Source points \n";
+	// std::cout <<"Source points 1\n";
 	// for (int i = 0 ; i < 4; i++)
 	// {
 	// 	std::cout << sourcePoints[i] << " ";
@@ -523,8 +525,9 @@ Mat transform_perspective(Mat source, cv::Point2f sourcePoints[4], int s)
 	// 	std::cout << destinationPoints[i] << " ";
 	// }
 	// std::cout << "\n";
-	Mat transformMatrix = getPerspectiveTransform(sourcePoints, destinationPoints);
 
+	Mat transformMatrix = getPerspectiveTransform(sourcePoints, destinationPoints);
+	// std::cout << "1:" << transformMatrix << std::endl;
 	// std::cout << "Transformation matrix" << std::endl;
 	//
 	// std::cout << transformMatrix;
@@ -545,30 +548,35 @@ Mat transform_perspective(Mat source, cv::Point2f sourcePoints[4], int s)
 }
 
 
-void detectLines()
+void chessBoardDetection()
 {
 	char path[MAX_PATH];
 	int thresh = 200;
-	int size = 640;
 
+	Size sizeImg(640, 640);
+	PerspectiveProjection perspectiveProjectionUtil;
 
 	while(openFileDlg(path))
 	{
-		Mat gray, imgResized;
+		Mat gray, imgResized, edges, grayWithoutNoises;
 		Mat source = imread(path, IMREAD_COLOR);
-		resizeImg(source, imgResized, 1024, true);
-		std::cout << imgResized.at<Vec3b>(0, 0);
-		Mat imgResized2 = removeRedColor(imgResized, 50, 105);
-		cvtColor(imgResized2,gray, COLOR_BGR2GRAY);
-		Mat grayWithotNoises = filterGaussianNoises(gray, 5);
 
-		Mat edges;
-		Canny(grayWithotNoises, edges, 100, thresh);
+		// resize image
+		resizeImg(source, imgResized, 1024, true);
+		// Mat imgResized2 = removeRedColor(imgResized, 50, 105);
+
+		// convert to gray scale
+		cvtColor(imgResized, gray, COLOR_BGR2GRAY);
+
+		// remove noises
+		grayWithoutNoises = filterGaussianNoises(gray, 5);
+
+		// apply edge filter
+		Canny(grayWithoutNoises, edges, 100, thresh);
 		
 		// Create a vector to store lines of the image
 		std::vector<Vec4i> lines;
-
-		Point tl,tr, bl, br;
+		Point tl, tr, bl, br;
 		HoughLinesP(edges, lines, 1, CV_PI / 180, thresh, 10, 250);
 		std::vector<Point> points;
 		for (auto l: lines)
@@ -584,39 +592,38 @@ void detectLines()
 			}
 		}
 
-		
-		getBorderBoxes(points, tl, tr, bl, br);
+		// destination points for OPENCV Method
+		Point2f destinationPoints1[4] = { Point2f(0,0), Point2f(sizeImg.height, 0), Point2f(0, sizeImg.width) ,Point2f(sizeImg.height, sizeImg.width) };
+		// destination points for our implementation
+		Point2f destinationPoints2[4] = { Point2f(0,0), Point2f(0, sizeImg.width), Point2f(sizeImg.height, 0) ,Point2f(sizeImg.height, sizeImg.width) };
 
-		printf("img resized size %d %d", imgResized.rows, imgResized.cols);
-		Mat newImg(imgResized.rows, imgResized.cols, CV_8UC1, Scalar(255));
+		// compute border points of the chess board
+		perspectiveProjectionUtil.getBorderBoxes(points, tl, tr, bl, br);
 		Point2f sourcePoints[4] = { tl, tr, bl, br };
 
-		Mat transform = transform_perspective(imgResized, sourcePoints, size);
-		Mat t = perspectiveProjection(imgResized, sourcePoints, size);
+		// projection with opencv implementation
+		Mat projectionMatrix1 = perspectiveProjectionUtil.getPerspectiveTransform(sourcePoints, destinationPoints1, OPEN_CV);
+		Mat imgProjected1 = perspectiveProjectionUtil.perspectiveProjection(projectionMatrix1, imgResized, OPEN_CV, sizeImg);
 
-		// circle(newImg, bl, 2, Scalar(0), 2, 8, 0);
-		// circle(newImg, br, 2, Scalar(40), 2, 8, 0);
-		// circle(newImg, tl, 2, Scalar(0), 2, 8, 0);
-		circle(newImg, tr, 2, Scalar(120), 2, 8, 0);
-		circle(newImg, Point(900, 10), 5, Scalar(0), 2, 8, 0);
+		// projection with out implementation
+		Mat projectionMatrix2 = perspectiveProjectionUtil.getPerspectiveTransform(sourcePoints, destinationPoints2, PIZZA);
+		Mat imgProjected2 = perspectiveProjectionUtil.perspectiveProjection(projectionMatrix2, imgResized, PIZZA, sizeImg);
 
-		std::cout << tl << " " << tr << " " << bl << " " << br << std::endl;
-		// // Apply Hough Transform
 
-		// // Draw lines on the image
-		// for (size_t i = 0; i < lines.size(); i++) {
-		// 	Vec4i l = lines[i];
-		// 	circle(imgResized, Point(l[0], l[1]), 2, Scalar(0),2, 8, 0);
-		// 	circle(imgResized, Point(l[2], l[3]), 2, Scalar(0),2, 8, 0);
-		// 	// line(imgResized, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(255, 0, 0), 3, LINE_AA);
-		// }
-		// Show result image
+		// Start drawing Margins
+		Mat boardMargins(imgResized.rows, imgResized.cols, CV_8UC1, Scalar(255));
+		circle(boardMargins, bl, 2, Scalar(0), 2, 8, 0);
+		circle(boardMargins, br, 2, Scalar(40), 2, 8, 0);
+		circle(boardMargins, tl, 2, Scalar(0), 2, 8, 0);
+		circle(boardMargins, tr, 2, Scalar(120), 2, 8, 0);
+		imshow("Board margins", boardMargins);
+		// End drawing margins
+
 		imshow("Gray", gray);
 		imshow("Edges", edges);
-		imshow("Margin", newImg);
-		imshow("Result Image", imgResized);
-		imshow("Transform", transform);
-		imshow("Transform2", t);
+		imshow("Image resized", imgResized);
+		imshow("Img projection1-OPENCV", imgProjected1);
+		imshow("Img projection2-PIZZA", imgProjected2);
 		waitKey();
 	}
 }
@@ -750,7 +757,7 @@ int main()
 			cornerHarrisDemo();
 			break;
 		case 11:
-			detectLines();
+			chessBoardDetection();
 			break;
 		case 12:
 			harrisCornersTest();
