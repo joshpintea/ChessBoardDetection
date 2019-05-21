@@ -96,6 +96,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="common.h" />
+    <ClInclude Include="HoughTransformation.h" />
     <ClInclude Include="ObjectProperties.h" />
     <ClInclude Include="PerspectiveProjection.h" />
     <ClInclude Include="stdafx.h" />
@@ -103,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="common.cpp" />
+    <ClCompile Include="HoughTransformation.cpp" />
     <ClCompile Include="ObjectProperties.cpp" />
     <ClCompile Include="OpenCVApplication.cpp" />
     <ClCompile Include="PerspectiveProjection.cpp" />

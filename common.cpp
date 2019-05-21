@@ -8,6 +8,7 @@
 #include <fstream>
 
 
+
 FileGetter::FileGetter(char* folderin, char* ext)
 {
 	strcpy(folder, folderin);

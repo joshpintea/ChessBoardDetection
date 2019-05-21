@@ -1,9 +1,4 @@
 ﻿  OpenCVApplication.cpp
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvapplication.cpp(511): warning C4244: 'argument': conversion from 'int' to '_Tp', possible loss of data
-          with
-          [
-              _Tp=float
-          ]
 d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvapplication.cpp(512): warning C4244: 'argument': conversion from 'int' to '_Tp', possible loss of data
           with
           [
@@ -14,7 +9,12 @@ d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvap
           [
               _Tp=float
           ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvapplication.cpp(596): warning C4244: 'argument': conversion from '_Tp' to '_Tp', possible loss of data
+d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvapplication.cpp(514): warning C4244: 'argument': conversion from 'int' to '_Tp', possible loss of data
+          with
+          [
+              _Tp=float
+          ]
+d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvapplication.cpp(585): warning C4244: 'argument': conversion from '_Tp' to '_Tp', possible loss of data
           with
           [
               _Tp=int
@@ -23,7 +23,7 @@ d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvap
           [
               _Tp=float
           ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvapplication.cpp(598): warning C4244: 'argument': conversion from '_Tp' to '_Tp', possible loss of data
+d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvapplication.cpp(587): warning C4244: 'argument': conversion from '_Tp' to '_Tp', possible loss of data
           with
           [
               _Tp=int
@@ -32,7 +32,8 @@ d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvap
           [
               _Tp=float
           ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvapplication.cpp(702): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvapplication.cpp(624): warning C4101: 'houghTransformationUtil': unreferenced local variable
+d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvapplication.cpp(727): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   OpenCVApplication.vcxproj -> D:\MyWorkSpace\Image Processing\ChessBoardDetection\ChessBoardDetection\x64\Debug\OpenCVApplication.exe
   OpenCV\dll\Debug\opencv_ffmpeg340_64.dll
   OpenCV\dll\Debug\opencv_world340d.dll
