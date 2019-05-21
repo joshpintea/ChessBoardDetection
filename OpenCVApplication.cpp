@@ -4,11 +4,14 @@
 #include "stdafx.h"
 #include "common.h"
 #include <vector>
-#include "time.h"
+#include <time.h>
 #include <fstream>
 #include <iostream>
 #include <experimental/filesystem>
 #include "PerspectiveProjection.h"
+
+#define WEAK 128
+#define STRONG 255
 
 using namespace std;
 
@@ -547,6 +550,265 @@ Mat transform_perspective(Mat source, cv::Point2f sourcePoints[4], int s)
 	return dst;
 }
 
+Mat convolutieGaussSeparat(Mat img, int w) {
+	float sigma = w / 6.0;
+	vector<float> Gx;
+	for (int i = 0; i < w; i++) {
+		for (int j = 0; j < w; j++) {
+			if (i == w / 2) {
+				Gx.push_back((1 / (sqrt(2 * PI)*sigma))*exp(-((j - w / 2)*(j - w / 2)) / (2 * sigma*sigma)));
+			}
+			else {
+				Gx.push_back(0);
+			}
+		}
+	}
+
+	vector<float> Gy;
+	for (int i = 0; i < w; i++) {
+		for (int j = 0; j < w; j++) {
+			if (j == w / 2) {
+				Gy.push_back((1 / (sqrt(2 * PI)*sigma))*exp(-((i - w / 2)*(i - w / 2)) / (2 * sigma*sigma)));
+			}
+			else {
+				Gy.push_back(0);
+			}
+		}
+	}
+
+	Mat newImg = img.clone();
+	Mat newImg2 = img.clone();
+	int k = (w - 1) / 2;
+	for (int i = k; i < img.rows - k; i++) {
+		for (int j = k; j < img.cols - k; j++) {
+			float suma = 0;
+			for (int u = 0; u < w; u++) {
+				for (int v = 0; v < w; v++) {
+					suma += (Gx[u*w + v] * img.at<uchar>(i + u - k, j + v - k));
+				}
+			}
+			newImg.at<uchar>(i, j) = suma;
+		}
+	}
+
+	for (int i = k; i < img.rows - k; i++) {
+		for (int j = k; j < img.cols - k; j++) {
+			float suma = 0;
+			for (int u = 0; u < w; u++) {
+				for (int v = 0; v < w; v++) {
+					suma += (Gy[u*w + v] * newImg.at<uchar>(i + u - k, j + v - k));
+				}
+			}
+			newImg2.at<uchar>(i, j) = suma;
+		}
+	}
+	return newImg2;
+}
+
+Mat cannyBoti(Mat src) {
+	Mat temp = src.clone();
+	Mat modul = Mat::zeros(src.size(), CV_8UC1);
+	Mat directie = Mat::zeros(src.size(), CV_8UC1);
+
+	temp = convolutieGaussSeparat(src, 5);
+	vector<int> nucleux;
+	nucleux.push_back(-1);
+	nucleux.push_back(0);
+	nucleux.push_back(1);
+	nucleux.push_back(-2);
+	nucleux.push_back(0);
+	nucleux.push_back(2);
+	nucleux.push_back(-1);
+	nucleux.push_back(0);
+	nucleux.push_back(1);
+
+	vector<int> nucleuy;
+	nucleuy.push_back(1);
+	nucleuy.push_back(2);
+	nucleuy.push_back(1);
+	nucleuy.push_back(0);
+	nucleuy.push_back(0);
+	nucleuy.push_back(0);
+	nucleuy.push_back(-1);
+	nucleuy.push_back(-2);
+	nucleuy.push_back(-1);
+
+	int w = 3;
+	int k = 1;
+	int dir;
+	for (int i = k; i < temp.rows - k; i++) {
+		for (int j = k; j < temp.cols - k; j++) {
+			int sumax = 0;
+			int sumay = 0;
+			for (int u = 0; u < w; u++) {
+				for (int v = 0; v < w; v++) {
+					sumax += (nucleux[u*w + v] * temp.at<uchar>(i + u - k, j + v - k));
+					sumay += (nucleuy[u*w + v] * temp.at<uchar>(i + u - k, j + v - k));
+				}
+			}
+			modul.at<uchar>(i, j) = sqrt(sumax*sumax + sumay * sumay) / 5.65;
+			float teta = atan2((float)sumay, (float)sumax);
+			if ((teta > 3 * PI / 8 && teta < 5 * PI / 8) || (teta > -5 * PI / 8 && teta < -3 * PI / 8)) dir = 0;
+			if ((teta > PI / 8 && teta < 3 * PI / 8) || (teta > -7 * PI / 8 && teta < -5 * PI / 8)) dir = 1;
+			if ((teta > -PI / 8 && teta < PI / 8) || teta > 7 * PI / 8 && teta < -7 * PI / 8) dir = 2;
+			if ((teta > 5 * PI / 8 && teta < 7 * PI / 8) || (teta > -3 * PI / 8 && teta < -PI / 8)) dir = 3;
+			directie.at<uchar>(i, j) = dir;
+		}
+	}
+
+	Mat subtiere = modul.clone();
+
+	for (int i = 0; i < modul.rows; i++) {
+		for (int j = 0; j < modul.cols; j++) {
+			int m = modul.at<uchar>(i, j);
+			switch (directie.at<uchar>(i, j))
+			{
+			case 2:
+				if (j - 1 >= 0) {
+					if (modul.at<uchar>(i, j - 1) > modul.at<uchar>(i, j)) {
+						m = 0;
+					}
+				}
+				if (j + 1 < modul.cols) {
+					if (modul.at<uchar>(i, j + 1) > modul.at<uchar>(i, j)) {
+						m = 0;
+					}
+				}
+				break;
+			case 1:
+				if (j + 1 < modul.cols && i - 1 >= 0) {
+					if (modul.at<uchar>(i - 1, j + 1) > modul.at<uchar>(i, j)) {
+						m = 0;
+					}
+				}
+				if (j - 1 >= 0 && i + 1 < modul.rows) {
+					if (modul.at<uchar>(i + 1, j - 1) > modul.at<uchar>(i, j)) {
+						m = 0;
+					}
+				}
+				break;
+			case 0:
+				if (i - 1 >= 0) {
+					if (modul.at<uchar>(i - 1, j) > modul.at<uchar>(i, j)) {
+						m = 0;
+					}
+				}
+				if (i + 1 < modul.rows) {
+					if (modul.at<uchar>(i + 1, j) > modul.at<uchar>(i, j)) {
+						m = 0;
+					}
+				}
+				break;
+			case 3:
+				if (j + 1 < modul.cols && i + 1 < modul.rows) {
+					if (modul.at<uchar>(i + 1, j + 1) > modul.at<uchar>(i, j)) {
+						m = 0;
+					}
+				}
+				if (j - 1 >= 0 && i - 1 >= 0) {
+					if (modul.at<uchar>(i - 1, j - 1) > modul.at<uchar>(i, j)) {
+						m = 0;
+					}
+				}
+				break;
+			default:
+				break;
+			}
+			subtiere.at<uchar>(i, j) = m;
+		}
+	}
+
+
+	for (int i = k; i < subtiere.rows; i++) {
+		subtiere.at<uchar>(i, 0) = 0;
+		subtiere.at<uchar>(i, subtiere.cols - 1) = 0;
+	}
+
+	for (int i = k; i < subtiere.cols; i++) {
+		subtiere.at<uchar>(0, i) = 0;
+		subtiere.at<uchar>(subtiere.rows - 1, i) = 0;
+	}
+
+
+	int hist[256] = { 0 };
+
+	for (int i = k; i < subtiere.rows; i++) {
+		for (int j = k; j < subtiere.cols; j++) {
+			hist[subtiere.at<uchar>(i, j)]++;
+		}
+	}
+
+	int nrNonMuchie = (1 - 0.1)*(subtiere.rows*subtiere.cols - hist[0]);
+	int sumahist = 0, prag = 0;
+	for (int i = 1; i < 256; i++) {
+		sumahist += hist[i];
+		if (sumahist > nrNonMuchie) {
+			prag = i;
+			break;
+		}
+	}
+
+	int pH = prag;
+	int pL = 0.4*pH;
+
+	modul = subtiere.clone();
+
+	for (int i = 0; i < modul.rows; i++) {
+		for (int j = 0; j < modul.cols; j++) {
+			if (modul.at<uchar>(i, j) < pL) {
+				modul.at<uchar>(i, j) = 0;
+			}
+			else
+				if (modul.at<uchar>(i, j) > pH) {
+					modul.at<uchar>(i, j) = STRONG;
+				}
+				else
+				{
+					modul.at<uchar>(i, j) = WEAK;
+				}
+		}
+	}
+
+	int difX[8] = { 0, -1, -1, -1,  0,  1, 1, 1 };
+	int difY[8] = { 1,  1,  0, -1, -1, -1, 0, 1 };
+
+	Mat visited(modul.rows, modul.cols, CV_8UC1, Scalar(0));
+	queue <Point> que;
+	for (int i = 0; i < modul.rows; i++) {
+		for (int j = 0; j < modul.cols; j++) {
+			if (modul.at<uchar>(i, j) == STRONG && visited.at<uchar>(i, j) == 0) {
+				que.push(Point(j, i));
+				visited.at<uchar>(i, j) = 1;
+			}
+			while (!que.empty()) {
+				Point oldest = que.front();
+				int jj = oldest.x;
+				int ii = oldest.y;
+				que.pop();
+				for (int p = 0; p < 8; p++) {
+					if (ii + difX[p] >= 0 && ii + difX[p] < modul.rows && jj + difY[p] >= 0 && jj + difY[p] < modul.cols) {
+						if (modul.at<uchar>(ii + difX[p], jj + difY[p]) == WEAK) {
+							modul.at<uchar>(ii + difX[p], jj + difY[p]) = STRONG;
+							que.push(Point(jj + difY[p], ii + difX[p]));
+							visited.at<uchar>(ii + difX[p], jj + difY[p]) = 1;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	for (int i = 0; i < modul.rows; i++) {
+		for (int j = 0; j < modul.cols; j++) {
+			if (modul.at<uchar>(i, j) == WEAK) {
+				modul.at<uchar>(i, j) = 0;
+			}
+		}
+	}
+
+
+	return modul;
+}
 
 void chessBoardDetection()
 {
@@ -569,11 +831,12 @@ void chessBoardDetection()
 		cvtColor(imgResized, gray, COLOR_BGR2GRAY);
 
 		// remove noises
-		grayWithoutNoises = filterGaussianNoises(gray, 5);
+		//grayWithoutNoises = filterGaussianNoises(gray, 5);
 
 		// apply edge filter
-		Canny(grayWithoutNoises, edges, 100, thresh);
-		
+		//Canny(grayWithoutNoises, edges, 100, thresh);
+		grayWithoutNoises = cannyBoti(gray);
+		/*
 		// Create a vector to store lines of the image
 		std::vector<Vec4i> lines;
 		Point tl, tr, bl, br;
@@ -618,12 +881,13 @@ void chessBoardDetection()
 		circle(boardMargins, tr, 2, Scalar(120), 2, 8, 0);
 		imshow("Board margins", boardMargins);
 		// End drawing margins
-
-		imshow("Gray", gray);
-		imshow("Edges", edges);
-		imshow("Image resized", imgResized);
-		imshow("Img projection1-OPENCV", imgProjected1);
-		imshow("Img projection2-PIZZA", imgProjected2);
+		*/
+		imshow("hi", grayWithoutNoises);
+		//imshow("Gray", gray);
+		//imshow("Edges", edges);
+		//imshow("Image resized", imgResized);
+		//imshow("Img projection1-OPENCV", imgProjected1);
+		//imshow("Img projection2-PIZZA", imgProjected2);
 		waitKey();
 	}
 }
