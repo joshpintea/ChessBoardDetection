@@ -473,11 +473,11 @@ void cornerHarrisDemo()
 	int blockSize = 2;
 	int apertureSize = 3;
 	double k = 0.02;
-	
+
 	int thresh = 200;
 	std::cin >> thresh;
-	while (openFileDlg(path)) {
-	
+	while (openFileDlg(path))
+	{
 		Mat src = imread(path, CV_LOAD_IMAGE_GRAYSCALE);
 		Mat source;
 		resizeImg(src, source, 600, true);
@@ -548,73 +548,263 @@ Mat transform_perspective(Mat source, cv::Point2f sourcePoints[4], int s)
 	return dst;
 }
 
+bool compareContourAreas(std::vector<cv::Point> contour1, std::vector<cv::Point> contour2)
+{
+	double i = fabs(contourArea(cv::Mat(contour1)));
+	double j = fabs(contourArea(cv::Mat(contour2)));
+	return (i > j);
+}
+
+int thresh = 200;
+Mat imgResized, edges, gray;
+
+bool compareVertical(pair<Point2f, Point2f> p1, pair<Point2f, Point2f> p2)
+{
+	return (p1.first.x + p1.second.x) < (p2.first.x + p2.first.x);
+}
+
+bool compareOrizontal(pair<Point2f, Point2f> p1, pair<Point2f, Point2f> p2)
+{
+	return (p1.first.y + p1.second.y) < (p2.first.y + p2.first.y);
+}
+
+bool intersection2(Point2f o1, Point2f p1, Point2f o2, Point2f p2,
+	Point2f& r)
+{
+	Point2f x = o2 - o1;
+	Point2f d1 = p1 - o1;
+	Point2f d2 = p2 - o2;
+
+	float cross = d1.x * d2.y - d1.y * d2.x;
+	if (abs(cross) < /*EPS*/1.0) {
+		return false;
+	}
+
+	double t1 = (x.x * d2.y - x.y * d2.x) / cross;
+	r = o1 + d1 * t1;
+	return true;
+}
+
+void onTrackBarTresh(int, void*)
+{
+	std::vector<Point> points;
+	std::vector<Vec4i> lines;
+	Size sizeImg(640, 640);
+	Canny(gray, edges, 50, thresh);
+
+	HoughLinesP(edges, lines, 1, CV_PI / 180, thresh, 10, 250);
+
+	Mat imgs = imgResized.clone();
+
+	vector<pair<Point2f, Point2f>> verticalLines;
+	vector<pair<Point2f, Point2f>> orizontalLines;
+	int *cols = (int*)calloc((int)edges.cols, sizeof(int));
+	int *rows = (int*)calloc((int)edges.rows, sizeof(int));
+	bool d = false;
+	for (auto l : lines)
+	{
+		Point2f p1(l[0], l[1]);
+		Point2f p2(l[2], l[3]);
+
+		float m = (p2.y - p1.y) / (p2.x - p1.x);
+
+		if (std::abs(m) < 0.1)
+		{
+			d = false;
+			for (int y = p1.y - 5;y < p1.y + 5; y++)
+			{
+				if (y >= 0 && y < edges.rows) {
+					d |= rows[y];
+				}
+			}
+			if (!d) {
+				orizontalLines.push_back(make_pair(p1, p2));
+			}
+		}
+		else if (std::abs(m) > 3)
+		{
+			d = false;
+			for (int x = p1.x - 5; x < p1.x + 5; x++)
+			{
+				if (x >= 0 && x < edges.cols) {
+					d |= cols[x];
+				}
+			}
+			if (!d) {
+				verticalLines.push_back(make_pair(p1, p2));
+			}
+		}
+	}
+	sort(verticalLines.begin(), verticalLines.end(), compareVertical);
+	sort(orizontalLines.begin(), orizontalLines.end(), compareOrizontal);
+
+	Point2f tl, tr, bl, br;
+	int sizeO = orizontalLines.size();
+	int sizeV = verticalLines.size();
+
+	intersection2(verticalLines[1].first, verticalLines[1].second, orizontalLines[1].first, orizontalLines[1].second, tl);
+	intersection2(verticalLines[1].first, verticalLines[1].second, orizontalLines[sizeO - 1].first, orizontalLines[sizeO - 1].second, bl);
+	intersection2(verticalLines[sizeV - 1].first, verticalLines[sizeV - 1].second, orizontalLines[1].first, orizontalLines[1].second, tr);
+	intersection2(verticalLines[sizeV - 1].first, verticalLines[sizeV - 1].second, orizontalLines[sizeO - 1].first, orizontalLines[sizeO - 1].second, br);
+
+	for (auto p : verticalLines)
+	{
+		line(imgs, p.first, p.second, Scalar(0, 0, 255), 3, LINE_AA);
+	}
+
+	for (auto p : orizontalLines)
+	{
+		line(imgs, p.first, p.second, Scalar(255, 0, 0), 3, LINE_AA);
+	}
+	// // destination points for OPENCV Method
+	Point2f destinationPoints1[4] = {
+		Point2f(0, 0), Point2f(sizeImg.height, 0), Point2f(0, sizeImg.width), Point2f(sizeImg.height, sizeImg.width)
+	};
+
+	PerspectiveProjection perspectiveProjectionUtil;
+	Point2f sourcePoints[4] = { tl, tr, bl, br };
+	// projection with opencv implementation
+	Mat projectionMatrix1 = perspectiveProjectionUtil.getPerspectiveTransform(sourcePoints, destinationPoints1, OPEN_CV);
+	Mat imgProjected1 = perspectiveProjectionUtil.perspectiveProjection(projectionMatrix1, imgResized, OPEN_CV, sizeImg);
+
+	imshow("Parallel lines", imgs);
+	imshow("Chessboard projection", imgProjected1);
+}
+void onTrackBarTresh2(int, void*)
+{
+	std::vector<Point> points;
+
+	std::vector<Vec2f> lines;
+	Canny(gray, edges, 200, thresh);
+
+	// HoughLinesP(edges, lines, 1, CV_PI / 180, thresh, 0, 250);
+
+	cout << thresh << " ";
+	HoughLines(edges, lines, 1, CV_PI / 180, thresh, 0, 0);
+	Mat imgs = imgResized.clone();
+	for (auto l : lines)
+	{
+		float rho = l[0], theta = l[1];
+		Point p1, p2;
+		double a = cos(theta), b = sin(theta);
+		double x0 = a * rho, y0 = b * rho;
+		p1.x = cvRound(x0 + 1000 * (-b));
+		p1.y = cvRound(y0 + 1000 * (a));
+		p2.x = cvRound(x0 - 1000 * (-b));
+		p2.y = cvRound(y0 - 1000 * (a));
+		// Point2f p1(l[0], l[1]);
+		// Point2f p2(l[2], l[3]);
+	
+		float m = (p2.y - p1.y) / (p2.x - p1.x);
+		if (std::abs(m) < 0.1)
+		{
+			line(imgs, p1, p2, Scalar(0, 0, 255), 3, LINE_AA);
+		}
+		else if (std::abs(m) > 3)
+		{
+			line(imgs, p1, p2, Scalar(255, 0, 0), 3, LINE_AA);
+		}
+	}
+
+	imshow("Parallel lines", imgs);
+}
 
 void chessBoardDetection()
 {
 	char path[MAX_PATH];
-	int thresh = 200;
+	// int thresh = 200;
 
 	Size sizeImg(640, 640);
 	PerspectiveProjection perspectiveProjectionUtil;
 	HoughTransformation houghTransformationUtil;
 
-	while(openFileDlg(path))
-	{
-		Mat gray, imgResized, edges, grayWithoutNoises;
-		Mat source = imread(path, IMREAD_COLOR);
+	openFileDlg(path);
 
-		// resize image
-		resizeImg(source, imgResized, 1024, true);
-		// Mat imgResized2 = removeRedColor(imgResized, 50, 105);
+	// while (openFileDlg(path))
+	// {
+	Mat grayWithoutNoises;
+	Mat source = imread(path, IMREAD_COLOR);
 
-		// convert to gray scale
-		cvtColor(imgResized, gray, COLOR_BGR2GRAY);
+	// resize image
+	resizeImg(source, imgResized, 1024, true);
+	// Mat imgResized2 = removeRedColor(imgResized, 50, 105);
 
-		// remove noises
-		grayWithoutNoises = filterGaussianNoises(gray, 5);
+	// convert to gray scale
+	cvtColor(imgResized, gray, COLOR_BGR2GRAY);
 
-		// apply edge filter
-		Canny(grayWithoutNoises, edges, 100, thresh);
+	// remove noises
+	// grayWithoutNoises = filterGaussianNoises(gray, 5);
 
-		// apply hough line transformation 
-		std::vector<Point> points; 
-		houghTransformationUtil.transform(edges, 130, 180, points, OPEN_CV_H);
-		Point tl, tr, bl, br;
-		
-		// destination points for OPENCV Method
-		Point2f destinationPoints1[4] = { Point2f(0,0), Point2f(sizeImg.height, 0), Point2f(0, sizeImg.width) ,Point2f(sizeImg.height, sizeImg.width) };
-		// destination points for our implementation
-		Point2f destinationPoints2[4] = { Point2f(0,0), Point2f(0, sizeImg.width), Point2f(sizeImg.height, 0) ,Point2f(sizeImg.height, sizeImg.width) };
-		
-		// compute border points of the chess board
-		perspectiveProjectionUtil.getBorderBoxes(points, tl, tr, bl, br);
-		Point2f sourcePoints[4] = { tl, tr, bl, br };
-		
-		// projection with opencv implementation
-		Mat projectionMatrix1 = perspectiveProjectionUtil.getPerspectiveTransform(sourcePoints, destinationPoints1, OPEN_CV);
-		Mat imgProjected1 = perspectiveProjectionUtil.perspectiveProjection(projectionMatrix1, imgResized, OPEN_CV, sizeImg);
-		
-		// projection with out implementation
-		Mat projectionMatrix2 = perspectiveProjectionUtil.getPerspectiveTransform(sourcePoints, destinationPoints2, PIZZA);
-		Mat imgProjected2 = perspectiveProjectionUtil.perspectiveProjection(projectionMatrix2, imgResized, PIZZA, sizeImg);
-		
-		
-		// Start drawing Margins
-		Mat boardMargins(imgResized.rows, imgResized.cols, CV_8UC1, Scalar(255));
-		circle(boardMargins, bl, 2, Scalar(0), 2, 8, 0);
-		circle(boardMargins, br, 2, Scalar(40), 2, 8, 0);
-		circle(boardMargins, tl, 2, Scalar(0), 2, 8, 0);
-		circle(boardMargins, tr, 2, Scalar(120), 2, 8, 0);
-		imshow("Board margins", boardMargins);
-		// End drawing margins
-		
-		imshow("Gray", gray);
-		imshow("Edges", edges);
-		imshow("Image resized", imgResized);
-		imshow("Img projection1-OPENCV", imgProjected1);
-		imshow("Img projection2-PIZZA", imgProjected2);
-		waitKey();
-	}
+	// apply edge filter
+
+	char TrackbarName[50];
+	sprintf(TrackbarName, "Treshhold x %d", 255);
+
+	namedWindow("Parallel lines", 1);
+	createTrackbar(TrackbarName, "Parallel lines", &thresh,255, onTrackBarTresh);
+
+	onTrackBarTresh(thresh, 0);
+	// apply hough line transformation 
+
+	// houghTransformationUtil.transform(edges, 130, 180, points, OPEN_CV_H);
+	// Point tl, tr, bl, br;
+	// //
+	// // // destination points for OPENCV Method
+	// Point2f destinationPoints1[4] = {
+	// 	Point2f(0, 0), Point2f(sizeImg.height, 0), Point2f(0, sizeImg.width), Point2f(sizeImg.height, sizeImg.width)
+	// };
+
+	// vector<Vec2f> lines; // will hold the results of the detection
+	// HoughLines(edges, lines, 1, CV_PI / 180, 150, 0, 0);
+	// for (size_t i = 0; i < lines.size(); i++)
+	// {
+	//  float rho = lines[i][0], theta = lines[i][1];
+	//  Point pt1, pt2;
+	//  double a = cos(theta), b = sin(theta);
+	//  double x0 = a * rho, y0 = b * rho;
+	//  pt1.x = cvRound(x0 + 1000 * (-b));
+	//  pt1.y = cvRound(y0 + 1000 * (a));
+	//  pt2.x = cvRound(x0 - 1000 * (-b));
+	//  pt2.y = cvRound(y0 - 1000 * (a));
+	//  line(imgResized, pt1, pt2, Scalar(0, 0, 255), 3, LINE_AA);
+	// }
+	// // destination points for our implementation
+	// Point2f destinationPoints2[4] = { Point2f(0,0), Point2f(0, sizeImg.width), Point2f(sizeImg.height, 0) ,Point2f(sizeImg.height, sizeImg.width) };
+	//
+	// // compute border points of the chess board
+	/**perspectiveProjectionUtil.getBorderBoxes(points, tl, tr, bl, br);
+	Point2f sourcePoints[4] = { tl, tr, bl, br };
+	//
+	// // projection with opencv implementation
+	Mat projectionMatrix1 = perspectiveProjectionUtil.getPerspectiveTransform(sourcePoints, destinationPoints1, OPEN_CV);
+	Mat imgProjected1 = perspectiveProjectionUtil.perspectiveProjection(projectionMatrix1, imgResized, OPEN_CV, sizeImg);
+	//
+	// // projection with out implementation
+	// Mat projectionMatrix2 = perspectiveProjectionUtil.getPerspectiveTransform(sourcePoints, destinationPoints2, PIZZA);
+	// Mat imgProjected2 = perspectiveProjectionUtil.perspectiveProjection(projectionMatrix2, imgResized, PIZZA, sizeImg);
+	//
+
+	// Start drawing Margins
+	Mat boardMargins = imgResized.clone();
+
+	//		for (auto p: points)
+	//		{
+	//			circle(boardMargins, p, 2, Scalar(255, 0, 255), 2, 8, 0);
+	//		}
+	circle(boardMargins, bl, 2, Scalar(255,0,255), 2, 8, 0);
+	circle(boardMargins, br, 2, Scalar(255,0,255), 2, 8, 0);
+	circle(boardMargins, tl, 2, Scalar(255, 0, 255), 2, 8, 0);
+	circle(boardMargins, tr, 2,Scalar(255, 0, 255), 2, 8, 0);
+	imshow("Board margins", boardMargins);
+	// End drawing margins
+
+	imshow("Gray", gray);
+	imshow("Edges", edges);
+	imshow("Image resized", imgResized);
+	imshow("Img projection1-OPENCV", imgProjected1);
+	// imshow("Img projection2-PIZZA", imgProjected2);*/
+	waitKey();
+	// }
 }
 
 void testHoughTransformation()
@@ -637,17 +827,15 @@ void testHoughTransformation()
 		// apply edge filter
 		Canny(grayWithoutNoises, edges, 100, 200);
 
-		// std::vector<Vec4i> lines;
-		// houghTransformationUtil.transform(edges, 130, 180, lines);
-		// for (auto l: lines)
-		// {
-		// 	Point p1(l[0], l[1]);
-		// 	Point p2(l[2], l[3]);
-		// 	line(imgResized, p1, p2, CV_RGB(255, 0, 255));
-		// }
+		std::vector<Point> lines;
+		houghTransformationUtil.transform(edges, 130, 180, lines, PIZZA_H);
+		for (auto l : lines)
+		{
+			circle(imgResized, l, 2, Scalar(40), 2, 8, 0);
+		}
 		imshow("edges", edges);
 		imshow("img", imgResized);
-		
+
 		// harrisCorners(imgResized, 20.0f);
 		waitKey();
 	}
@@ -681,9 +869,8 @@ void test()
 
 		for (int i = 0; i < imgResized.rows; i++)
 		{
-			for (int j = 0 ; j < imgResized.cols; j++)
+			for (int j = 0; j < imgResized.cols; j++)
 			{
-
 				Vec3b color = imgResized.at<Vec3b>(i, j);
 
 				if (color[2] > 55 && color[2] < 120)
@@ -703,7 +890,7 @@ void testCannyEdgeDetection()
 {
 	char path[MAX_PATH];
 
-	while(openFileDlg(path))
+	while (openFileDlg(path))
 	{
 		Mat imgResized;
 		Mat img = imread(path, IMREAD_COLOR);

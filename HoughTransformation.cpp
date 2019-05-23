@@ -56,10 +56,10 @@ void HoughTransformation::transform(Mat edges, int thresh, int t, std::vector<Po
 					points.push_back(p2);
 				}
 			}
+			
 			break;
 		case PIZZA_H:
 			int maxDistance = hypot(edges.rows, edges.cols);
-
 			vector<vector<int>> votes(2 * maxDistance, vector<int>(t + 1, 0));
 			int rho, i, j, theta;
 			for (i = 0; i < edges.rows; ++i)
@@ -88,11 +88,14 @@ void HoughTransformation::transform(Mat edges, int thresh, int t, std::vector<Po
 						theta = j - 90;
 
 						Point p1, p2;
+						// line(dest, p1, p2, Scalar(255), 1, LINE_8, 0);
 						polarToCartesian(rho, theta, p1, p2);
 						lin.push_back(make_pair(p1, p2));
 					}
 				}
 			}
+
+			// imshow("dest", dest);
 
 			bool intersect;
 			for (i = 0; i < lin.size() - 1; i++)

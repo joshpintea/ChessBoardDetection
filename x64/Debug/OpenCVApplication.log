@@ -23,18 +23,5 @@ d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvap
           [
               _Tp=float
           ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvapplication.cpp(587): warning C4244: 'argument': conversion from '_Tp' to '_Tp', possible loss of data
-          with
-          [
-              _Tp=int
-          ]
-          and
-          [
-              _Tp=float
-          ]
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvapplication.cpp(624): warning C4101: 'houghTransformationUtil': unreferenced local variable
-d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvapplication.cpp(727): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  OpenCVApplication.vcxproj -> D:\MyWorkSpace\Image Processing\ChessBoardDetection\ChessBoardDetection\x64\Debug\OpenCVApplication.exe
-  OpenCV\dll\Debug\opencv_ffmpeg340_64.dll
-  OpenCV\dll\Debug\opencv_world340d.dll
-          2 file(s) copied.
+d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvapplication.cpp(613): error C2065: 'boardMargins': undeclared identifier
+d:\myworkspace\image processing\chessboarddetection\chessboarddetection\opencvapplication.cpp(730): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
