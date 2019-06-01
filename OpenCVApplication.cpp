@@ -561,257 +561,7 @@ bool compareContourAreas(std::vector<cv::Point> contour1, std::vector<cv::Point>
 	return (i > j);
 }
 
-int thresh = 200;
-Mat imgResized, edges, gray;
 
-bool compareVertical(pair<Point2f, Point2f> p1, pair<Point2f, Point2f> p2)
-{
-	return (p1.first.x + p1.second.x) < (p2.first.x + p2.first.x);
-}
-
-bool compareOrizontal(pair<Point2f, Point2f> p1, pair<Point2f, Point2f> p2)
-{
-	return (p1.first.y + p1.second.y) < (p2.first.y + p2.first.y);
-}
-
-bool intersection2(Point2f o1, Point2f p1, Point2f o2, Point2f p2,
-	Point2f& r)
-{
-	Point2f x = o2 - o1;
-	Point2f d1 = p1 - o1;
-	Point2f d2 = p2 - o2;
-
-	float cross = d1.x * d2.y - d1.y * d2.x;
-	if (abs(cross) < /*EPS*/1.0) {
-		return false;
-	}
-
-	double t1 = (x.x * d2.y - x.y * d2.x) / cross;
-	r = o1 + d1 * t1;
-	return true;
-}
-
-void onTrackBarTresh(int, void*)
-{
-	std::vector<Point> points;
-	std::vector<Vec4i> lines;
-	Size sizeImg(640, 640);
-	Canny(gray, edges, 50, thresh);
-
-	HoughLinesP(edges, lines, 1, CV_PI / 180, thresh, 10, 250);
-
-	Mat imgs = imgResized.clone();
-
-	vector<pair<Point2f, Point2f>> verticalLines;
-	vector<pair<Point2f, Point2f>> orizontalLines;
-	int *cols = (int*)calloc((int)edges.cols, sizeof(int));
-	int *rows = (int*)calloc((int)edges.rows, sizeof(int));
-	bool d = false;
-	for (auto l : lines)
-	{
-		Point2f p1(l[0], l[1]);
-		Point2f p2(l[2], l[3]);
-
-		float m = (p2.y - p1.y) / (p2.x - p1.x);
-
-		if (std::abs(m) < 0.1)
-		{
-			d = false;
-			for (int y = p1.y - 5;y < p1.y + 5; y++)
-			{
-				if (y >= 0 && y < edges.rows) {
-					d |= rows[y];
-				}
-			}
-			if (!d) {
-				orizontalLines.push_back(make_pair(p1, p2));
-			}
-		}
-		else if (std::abs(m) > 3)
-		{
-			d = false;
-			for (int x = p1.x - 5; x < p1.x + 5; x++)
-			{
-				if (x >= 0 && x < edges.cols) {
-					d |= cols[x];
-				}
-			}
-			if (!d) {
-				verticalLines.push_back(make_pair(p1, p2));
-			}
-		}
-	}
-	sort(verticalLines.begin(), verticalLines.end(), compareVertical);
-	sort(orizontalLines.begin(), orizontalLines.end(), compareOrizontal);
-
-	Point2f tl, tr, bl, br;
-	int sizeO = orizontalLines.size();
-	int sizeV = verticalLines.size();
-
-	intersection2(verticalLines[1].first, verticalLines[1].second, orizontalLines[1].first, orizontalLines[1].second, tl);
-	intersection2(verticalLines[1].first, verticalLines[1].second, orizontalLines[sizeO - 1].first, orizontalLines[sizeO - 1].second, bl);
-	intersection2(verticalLines[sizeV - 1].first, verticalLines[sizeV - 1].second, orizontalLines[1].first, orizontalLines[1].second, tr);
-	intersection2(verticalLines[sizeV - 1].first, verticalLines[sizeV - 1].second, orizontalLines[sizeO - 1].first, orizontalLines[sizeO - 1].second, br);
-
-	for (auto p : verticalLines)
-	{
-		line(imgs, p.first, p.second, Scalar(0, 0, 255), 3, LINE_AA);
-	}
-
-	for (auto p : orizontalLines)
-	{
-		line(imgs, p.first, p.second, Scalar(255, 0, 0), 3, LINE_AA);
-	}
-	// // destination points for OPENCV Method
-	Point2f destinationPoints1[4] = {
-		Point2f(0, 0), Point2f(sizeImg.height, 0), Point2f(0, sizeImg.width), Point2f(sizeImg.height, sizeImg.width)
-	};
-
-	PerspectiveProjection perspectiveProjectionUtil;
-	Point2f sourcePoints[4] = { tl, tr, bl, br };
-	// projection with opencv implementation
-	Mat projectionMatrix1 = perspectiveProjectionUtil.getPerspectiveTransform(sourcePoints, destinationPoints1, OPEN_CV);
-	Mat imgProjected1 = perspectiveProjectionUtil.perspectiveProjection(projectionMatrix1, imgResized, OPEN_CV, sizeImg);
-
-	imshow("Parallel lines", imgs);
-	imshow("Chessboard projection", imgProjected1);
-}
-void onTrackBarTresh2(int, void*)
-{
-	std::vector<Point> points;
-
-	std::vector<Vec2f> lines;
-	Canny(gray, edges, 200, thresh);
-
-	// HoughLinesP(edges, lines, 1, CV_PI / 180, thresh, 0, 250);
-
-	cout << thresh << " ";
-	HoughLines(edges, lines, 1, CV_PI / 180, thresh, 0, 0);
-	Mat imgs = imgResized.clone();
-	for (auto l : lines)
-	{
-		float rho = l[0], theta = l[1];
-		Point p1, p2;
-		double a = cos(theta), b = sin(theta);
-		double x0 = a * rho, y0 = b * rho;
-		p1.x = cvRound(x0 + 1000 * (-b));
-		p1.y = cvRound(y0 + 1000 * (a));
-		p2.x = cvRound(x0 - 1000 * (-b));
-		p2.y = cvRound(y0 - 1000 * (a));
-		// Point2f p1(l[0], l[1]);
-		// Point2f p2(l[2], l[3]);
-	
-		float m = (p2.y - p1.y) / (p2.x - p1.x);
-		if (std::abs(m) < 0.1)
-		{
-			line(imgs, p1, p2, Scalar(0, 0, 255), 3, LINE_AA);
-		}
-		else if (std::abs(m) > 3)
-		{
-			line(imgs, p1, p2, Scalar(255, 0, 0), 3, LINE_AA);
-		}
-	}
-
-	imshow("Parallel lines", imgs);
-}
-
-void chessBoardDetection()
-{
-	char path[MAX_PATH];
-	// int thresh = 200;
-
-	Size sizeImg(640, 640);
-	PerspectiveProjection perspectiveProjectionUtil;
-	HoughTransformation houghTransformationUtil;
-	
-	openFileDlg(path);
-
-	// while (openFileDlg(path))
-	// {
-	Mat grayWithoutNoises;
-	Mat source = imread(path, IMREAD_COLOR);
-
-	// resize image
-	resizeImg(source, imgResized, 1024, true);
-	// Mat imgResized2 = removeRedColor(imgResized, 50, 105);
-
-	// convert to gray scale
-	cvtColor(imgResized, gray, COLOR_BGR2GRAY);
-
-	// remove noises
-	// grayWithoutNoises = filterGaussianNoises(gray, 5);
-
-	// apply edge filter
-
-	char TrackbarName[50];
-	sprintf(TrackbarName, "Treshhold x %d", 255);
-
-	namedWindow("Parallel lines", 1);
-	createTrackbar(TrackbarName, "Parallel lines", &thresh,255, onTrackBarTresh);
-
-	onTrackBarTresh(thresh, 0);
-	// apply hough line transformation 
-
-	// houghTransformationUtil.transform(edges, 130, 180, points, OPEN_CV_H);
-	// Point tl, tr, bl, br;
-	// //
-	// // // destination points for OPENCV Method
-	// Point2f destinationPoints1[4] = {
-	// 	Point2f(0, 0), Point2f(sizeImg.height, 0), Point2f(0, sizeImg.width), Point2f(sizeImg.height, sizeImg.width)
-	// };
-
-	// vector<Vec2f> lines; // will hold the results of the detection
-	// HoughLines(edges, lines, 1, CV_PI / 180, 150, 0, 0);
-	// for (size_t i = 0; i < lines.size(); i++)
-	// {
-	//  float rho = lines[i][0], theta = lines[i][1];
-	//  Point pt1, pt2;
-	//  double a = cos(theta), b = sin(theta);
-	//  double x0 = a * rho, y0 = b * rho;
-	//  pt1.x = cvRound(x0 + 1000 * (-b));
-	//  pt1.y = cvRound(y0 + 1000 * (a));
-	//  pt2.x = cvRound(x0 - 1000 * (-b));
-	//  pt2.y = cvRound(y0 - 1000 * (a));
-	//  line(imgResized, pt1, pt2, Scalar(0, 0, 255), 3, LINE_AA);
-	// }
-	// // destination points for our implementation
-	// Point2f destinationPoints2[4] = { Point2f(0,0), Point2f(0, sizeImg.width), Point2f(sizeImg.height, 0) ,Point2f(sizeImg.height, sizeImg.width) };
-	//
-	// // compute border points of the chess board
-	/**perspectiveProjectionUtil.getBorderBoxes(points, tl, tr, bl, br);
-	Point2f sourcePoints[4] = { tl, tr, bl, br };
-	//
-	// // projection with opencv implementation
-	Mat projectionMatrix1 = perspectiveProjectionUtil.getPerspectiveTransform(sourcePoints, destinationPoints1, OPEN_CV);
-	Mat imgProjected1 = perspectiveProjectionUtil.perspectiveProjection(projectionMatrix1, imgResized, OPEN_CV, sizeImg);
-	//
-	// // projection with out implementation
-	// Mat projectionMatrix2 = perspectiveProjectionUtil.getPerspectiveTransform(sourcePoints, destinationPoints2, PIZZA);
-	// Mat imgProjected2 = perspectiveProjectionUtil.perspectiveProjection(projectionMatrix2, imgResized, PIZZA, sizeImg);
-	//
-
-	// Start drawing Margins
-	Mat boardMargins = imgResized.clone();
-
-	//		for (auto p: points)
-	//		{
-	//			circle(boardMargins, p, 2, Scalar(255, 0, 255), 2, 8, 0);
-	//		}
-	circle(boardMargins, bl, 2, Scalar(255,0,255), 2, 8, 0);
-	circle(boardMargins, br, 2, Scalar(255,0,255), 2, 8, 0);
-	circle(boardMargins, tl, 2, Scalar(255, 0, 255), 2, 8, 0);
-	circle(boardMargins, tr, 2,Scalar(255, 0, 255), 2, 8, 0);
-	imshow("Board margins", boardMargins);
-	// End drawing margins
-
-	imshow("Gray", gray);
-	imshow("Edges", edges);
-	imshow("Image resized", imgResized);
-	imshow("Img projection1-OPENCV", imgProjected1);
-	// imshow("Img projection2-PIZZA", imgProjected2);*/
-	waitKey();
-	// }
-}
 
 void testHoughTransformation()
 {
@@ -937,12 +687,13 @@ vector<vector<float>> knightDescriptors;
 vector<vector<float>> queenDescriptors;
 vector<vector<float>> rookDescriptors;
 
+string basePath = "D:/MyWorkSpace/Image Processing/ChessBoardDetection/ChessBoardDetection/Images/training_images/";
 
 void trainBishopDescriptor()
 {
 	for (int i = 1; i <= 32; i++)
 	{
-		string filename = "Images/training_images/bishop/";
+		string filename = basePath + "bishop/";
 		filename += std::to_string(i);
 		filename += ".jpg";
 		Mat img1 = imread(filename);
@@ -988,7 +739,7 @@ void trainKingDescriptor()
 {
 	for (int i = 1; i <= 16; i++)
 	{
-		string filename = "Images/training_images/king/";
+		string filename = basePath + "king/";
 		filename += std::to_string(i);
 		filename += ".jpg";
 		Mat img1 = imread(filename);
@@ -1034,7 +785,7 @@ void trainPawnDescriptor()
 {
 	for (int i = 1; i <= 128; i++)
 	{
-		string filename = "Images/training_images/pawn/";
+		string filename = basePath + "pawn/";
 		filename += std::to_string(i);
 		filename += ".jpg";
 		Mat img1 = imread(filename);
@@ -1080,7 +831,7 @@ void trainEmptyDescriptor()
 {
 	for (int i = 1; i <= 64; i++)
 	{
-		string filename = "Images/training_images/empty/";
+		string filename = basePath + "empty/";
 		filename += std::to_string(i);
 		filename += ".jpg";
 		Mat img1 = imread(filename);
@@ -1126,7 +877,7 @@ void trainKnightDescriptor()
 {
 	for (int i = 1; i <= 32; i++)
 	{
-		string filename = "Images/training_images/knight/";
+		string filename = basePath + "knight/";
 		filename += std::to_string(i);
 		filename += ".jpg";
 		Mat img1 = imread(filename);
@@ -1172,7 +923,7 @@ void trainQueenDescriptor()
 {
 	for (int i = 1; i <= 32; i++)
 	{
-		string filename = "Images/training_images/queen/";
+		string filename = basePath + "queen/";
 		filename += std::to_string(i);
 		filename += ".jpg";
 		Mat img1 = imread(filename);
@@ -1218,7 +969,7 @@ void trainRookDescriptor()
 {
 	for (int i = 1; i <= 32; i++)
 	{
-		string filename = "Images/training_images/rook/";
+		string filename = basePath + "rook/";
 		filename += std::to_string(i);
 		filename += ".jpg";
 		Mat img1 = imread(filename);
@@ -1260,7 +1011,7 @@ void trainRookDescriptor()
 	}
 }
 
-void hog()
+void hog(Mat sourceImg)
 {
 	//Mat img = imread("Images/old_training_images/bp/20160529_214403.jpg",CV_LOAD_IMAGE_COLOR);
 	//Mat img1 = imread("Images/old_training_images/bp/20160529_214403.jpg");
@@ -1346,16 +1097,9 @@ void hog()
 	waitKey(0);
 	*/
 
-	trainBishopDescriptor();
-	trainKingDescriptor();
-	trainPawnDescriptor();
-	trainEmptyDescriptor();
-	trainKnightDescriptor();
-	trainQueenDescriptor();
-	trainRookDescriptor();
 	
-	Mat img = imread("Images/TEST.png");
-	resize(img, img, Size(64, 128));
+	Mat img;
+	resize(sourceImg, img, Size(64, 128));
 	imshow("img", img);
 	vector<float> descriptor;
 	HOGDescriptor h(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
@@ -1403,8 +1147,206 @@ void hog()
 	cout << "knight: " << kn / knightDescriptors.size() << "\n";
 	cout << "queen: " << q / queenDescriptors.size() << "\n";
 	cout << "rook: " << r / rookDescriptors.size() << "\n";
+}
+
+
+int thresh = 200;
+Mat imgResized, edges, gray;
+
+bool compareVertical(pair<Point2f, Point2f> p1, pair<Point2f, Point2f> p2)
+{
+	return (p1.first.x + p1.second.x) < (p2.first.x + p2.first.x);
+}
+
+bool compareOrizontal(pair<Point2f, Point2f> p1, pair<Point2f, Point2f> p2)
+{
+	return (p1.first.y + p1.second.y) < (p2.first.y + p2.first.y);
+}
+
+bool intersection2(Point2f o1, Point2f p1, Point2f o2, Point2f p2,
+	Point2f& r)
+{
+	Point2f x = o2 - o1;
+	Point2f d1 = p1 - o1;
+	Point2f d2 = p2 - o2;
+
+	float cross = d1.x * d2.y - d1.y * d2.x;
+	if (abs(cross) < /*EPS*/1.0) {
+		return false;
+	}
+
+	double t1 = (x.x * d2.y - x.y * d2.x) / cross;
+	r = o1 + d1 * t1;
+	return true;
+}
+
+void onTrackBarTresh(int, void*)
+{
+	std::vector<Point> points;
+	std::vector<Vec4i> lines;
+	Size sizeImg(640, 640);
+	Canny(gray, edges, 50, thresh);
+
+	HoughLinesP(edges, lines, 1, CV_PI / 180, thresh, 10, 250);
+
+	Mat imgs = imgResized.clone();
+
+	vector<pair<Point2f, Point2f>> verticalLines;
+	vector<pair<Point2f, Point2f>> orizontalLines;
+	int *cols = (int*)calloc((int)edges.cols, sizeof(int));
+	int *rows = (int*)calloc((int)edges.rows, sizeof(int));
+	bool d = false;
+	for (auto l : lines)
+	{
+		Point2f p1(l[0], l[1]);
+		Point2f p2(l[2], l[3]);
+
+		float m = (p2.y - p1.y) / (p2.x - p1.x);
+
+		if (std::abs(m) < 0.1)
+		{
+			d = false;
+			for (int y = p1.y - 5; y < p1.y + 5; y++)
+			{
+				if (y >= 0 && y < edges.rows) {
+					d |= rows[y];
+				}
+			}
+			if (!d) {
+				orizontalLines.push_back(make_pair(p1, p2));
+			}
+		}
+		else if (std::abs(m) > 3)
+		{
+			d = false;
+			for (int x = p1.x - 5; x < p1.x + 5; x++)
+			{
+				if (x >= 0 && x < edges.cols) {
+					d |= cols[x];
+				}
+			}
+			if (!d) {
+				verticalLines.push_back(make_pair(p1, p2));
+			}
+		}
+	}
+	sort(verticalLines.begin(), verticalLines.end(), compareVertical);
+	sort(orizontalLines.begin(), orizontalLines.end(), compareOrizontal);
+
+	Point2f tl, tr, bl, br;
+	int sizeO = orizontalLines.size();
+	int sizeV = verticalLines.size();
+
+	intersection2(verticalLines[1].first, verticalLines[1].second, orizontalLines[1].first, orizontalLines[1].second, tl);
+	intersection2(verticalLines[1].first, verticalLines[1].second, orizontalLines[sizeO - 1].first, orizontalLines[sizeO - 1].second, bl);
+	intersection2(verticalLines[sizeV - 1].first, verticalLines[sizeV - 1].second, orizontalLines[1].first, orizontalLines[1].second, tr);
+	intersection2(verticalLines[sizeV - 1].first, verticalLines[sizeV - 1].second, orizontalLines[sizeO - 1].first, orizontalLines[sizeO - 1].second, br);
+
+	for (auto p : verticalLines)
+	{
+		line(imgs, p.first, p.second, Scalar(0, 0, 255), 3, LINE_AA);
+	}
+
+	for (auto p : orizontalLines)
+	{
+		line(imgs, p.first, p.second, Scalar(255, 0, 0), 3, LINE_AA);
+	}
+	// // destination points for OPENCV Method
+	Point2f destinationPoints1[4] = {
+		Point2f(0, 0), Point2f(sizeImg.height, 0), Point2f(0, sizeImg.width), Point2f(sizeImg.height, sizeImg.width)
+	};
+
+	PerspectiveProjection perspectiveProjectionUtil;
+	Point2f sourcePoints[4] = { tl, tr, bl, br };
+	// projection with opencv implementation
+	Mat projectionMatrix1 = perspectiveProjectionUtil.getPerspectiveTransform(sourcePoints, destinationPoints1, OPEN_CV);
+	Mat imgProjected1 = perspectiveProjectionUtil.perspectiveProjection(projectionMatrix1, imgResized, OPEN_CV, sizeImg);
+
+
+	vector<vector<Mat>> board;
+
+	for (int i = 0; i < 8; i++)
+	{
+		vector<Mat> m;
+		board.push_back(m);
+	}
+
+	int s = 0;
+	char imageName[512];
+	// extragere piese de pe tabla de sah.
+	for (int y = 0; y < 7; y++) {
+		for (int x = 0; x < 8; x++)
+		{
+			if (y == 0)
+			{
+				Rect r1(x * 80, y * 80, 80, 80);
+				Mat img2 = imgProjected1(r1).clone();
+				board[0].push_back(img2);
+
+				Rect r2(x * 80, 0, 80, 160);
+				Mat img3 = imgProjected1(r2).clone();
+				board[1].push_back(img3);
+			}
+			else
+			{
+				Rect r1(x * 80, y * 80, 80, 160);
+				Mat img2 = imgProjected1(r1).clone();
+
+				board[y + 1].push_back(img2);
+			}
+
+		}
+	}
+
+
 	
-	waitKey(0);
+	for (int i = 0; i < 8 ; i++)
+	{
+		for (int j = 0; j < 8; j++)
+		{
+			cout << i << " " << j << std::endl << std::endl;
+			hog(board[i][j]);
+			cout << std::endl;
+			cout << std::endl;
+		}
+	}
+
+	imshow("Parallel lines", imgs);
+	imshow("Chessboard projection", imgProjected1);
+}
+
+void chessBoardDetection()
+{
+	char path[MAX_PATH];
+	openFileDlg(path);
+
+	Mat grayWithoutNoises;
+	Mat source = imread(path, IMREAD_COLOR);
+	
+	// resize image
+	resizeImg(source, imgResized, 1024, true);
+	
+	// convert to gray scale
+	cvtColor(imgResized, gray, COLOR_BGR2GRAY);
+
+	// train hog 
+	trainBishopDescriptor();
+	trainKingDescriptor();
+	trainPawnDescriptor();
+	trainEmptyDescriptor();
+	trainKnightDescriptor();
+	trainQueenDescriptor();
+	trainRookDescriptor();
+
+	char TrackbarName[50];
+	sprintf(TrackbarName, "Treshhold x %d", 255);
+	
+	namedWindow("Parallel lines", 1);
+	createTrackbar(TrackbarName, "Parallel lines", &thresh, 255, onTrackBarTresh);
+	
+	onTrackBarTresh(thresh, 0);
+	//
+	waitKey();
 }
 
 int main()
@@ -1486,7 +1428,7 @@ int main()
 			testHoughTransformation();
 			break;
 		case 16:
-			hog();
+			// hog();
 			break;
 		}
 	}
