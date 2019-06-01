@@ -929,8 +929,6 @@ float vectors_distance(vector<float> a,  vector<float> b)
 
 
 
-
-
 vector<vector<float>> bishopDescriptors;
 vector<vector<float>> kingDescriptors;
 vector<vector<float>> pawnDescriptors;
@@ -958,6 +956,7 @@ void trainBishopDescriptor()
 		h.compute(img1, descriptor1);
 		bishopDescriptors.push_back(descriptor1);
 
+		/*
 		Rect r1(0, 16, 64, 112);
 		Mat img2 = img1(r1).clone();
 		resize(img2, img2, Size(64, 128));
@@ -981,6 +980,7 @@ void trainBishopDescriptor()
 		resize(img5, img5, Size(64, 128));
 		h.compute(img5, descriptor5);
 		bishopDescriptors.push_back(descriptor5);
+		*/
 	}
 }
 
@@ -1002,7 +1002,7 @@ void trainKingDescriptor()
 		h.compute(img1, descriptor1);
 		kingDescriptors.push_back(descriptor1);
 
-
+		/*
 		Rect r1(0, 16, 64, 112);
 		Mat img2 = img1(r1).clone();
 		resize(img2, img2, Size(64, 128));
@@ -1026,6 +1026,7 @@ void trainKingDescriptor()
 		resize(img5, img5, Size(64, 128));
 		h.compute(img5, descriptor5);
 		kingDescriptors.push_back(descriptor5);
+		*/
 	}
 }
 
@@ -1047,7 +1048,7 @@ void trainPawnDescriptor()
 		h.compute(img1, descriptor1);
 		pawnDescriptors.push_back(descriptor1);
 
-
+		/*
 		Rect r1(0, 16, 64, 112);
 		Mat img2 = img1(r1).clone();
 		resize(img2, img2, Size(64, 128));
@@ -1071,6 +1072,7 @@ void trainPawnDescriptor()
 		resize(img5, img5, Size(64, 128));
 		h.compute(img5, descriptor5);
 		pawnDescriptors.push_back(descriptor5);
+		*/
 	}
 }
 
@@ -1092,7 +1094,7 @@ void trainEmptyDescriptor()
 		h.compute(img1, descriptor1);
 		emptyDescriptors.push_back(descriptor1);
 
-
+		/*
 		Rect r1(0, 16, 64, 112);
 		Mat img2 = img1(r1).clone();
 		resize(img2, img2, Size(64, 128));
@@ -1116,6 +1118,7 @@ void trainEmptyDescriptor()
 		resize(img5, img5, Size(64, 128));
 		h.compute(img5, descriptor5);
 		emptyDescriptors.push_back(descriptor5);
+		*/
 	}
 }
 
@@ -1137,7 +1140,7 @@ void trainKnightDescriptor()
 		h.compute(img1, descriptor1);
 		knightDescriptors.push_back(descriptor1);
 
-
+		/*
 		Rect r1(0, 16, 64, 112);
 		Mat img2 = img1(r1).clone();
 		resize(img2, img2, Size(64, 128));
@@ -1161,6 +1164,7 @@ void trainKnightDescriptor()
 		resize(img5, img5, Size(64, 128));
 		h.compute(img5, descriptor5);
 		knightDescriptors.push_back(descriptor5);
+		*/
 	}
 }
 
@@ -1182,7 +1186,7 @@ void trainQueenDescriptor()
 		h.compute(img1, descriptor1);
 		queenDescriptors.push_back(descriptor1);
 
-
+		/*
 		Rect r1(0, 16, 64, 112);
 		Mat img2 = img1(r1).clone();
 		resize(img2, img2, Size(64, 128));
@@ -1206,6 +1210,7 @@ void trainQueenDescriptor()
 		resize(img5, img5, Size(64, 128));
 		h.compute(img5, descriptor5);
 		queenDescriptors.push_back(descriptor5);
+		*/
 	}
 }
 
@@ -1227,7 +1232,7 @@ void trainRookDescriptor()
 		h.compute(img1, descriptor1);
 		rookDescriptors.push_back(descriptor1);
 
-
+		/*
 		Rect r1(0, 16, 64, 112);
 		Mat img2 = img1(r1).clone();
 		resize(img2, img2, Size(64, 128));
@@ -1251,6 +1256,7 @@ void trainRookDescriptor()
 		resize(img5, img5, Size(64, 128));
 		h.compute(img5, descriptor5);
 		rookDescriptors.push_back(descriptor5);
+		*/
 	}
 }
 
@@ -1356,47 +1362,47 @@ void hog()
 	h.compute(img, descriptor);
 	
 	float b=0;
-	for(int i=0; i<32*5; i++)
+	for(int i=0; i<bishopDescriptors.size(); i++)
 	{
 		b+=vectors_distance(descriptor, bishopDescriptors[i]);
 	}
 	float k = 0;
-	for (int i = 0; i < 16*5; i++)
+	for (int i = 0; i < kingDescriptors.size(); i++)
 	{
 		k+=vectors_distance(descriptor, kingDescriptors[i]);
 	}
 	float p = 0;
-	for (int i = 0; i < 128*5; i++)
+	for (int i = 0; i < pawnDescriptors.size(); i++)
 	{
 		p+=vectors_distance(descriptor, pawnDescriptors[i]);
 	}
 	float e = 0;
-	for (int i = 0; i < 64*5; i++)
+	for (int i = 0; i < emptyDescriptors.size(); i++)
 	{
 		e += vectors_distance(descriptor, emptyDescriptors[i]);
 	}
 	float kn = 0;
-	for (int i = 0; i < 32*5; i++)
+	for (int i = 0; i < knightDescriptors.size(); i++)
 	{
 		kn += vectors_distance(descriptor, knightDescriptors[i]);
 	}
 	float q = 0;
-	for (int i = 0; i < 32*5; i++)
+	for (int i = 0; i < queenDescriptors.size(); i++)
 	{
 		q += vectors_distance(descriptor, queenDescriptors[i]);
 	}
 	float r = 0;
-	for (int i = 0; i < 32*5; i++)
+	for (int i = 0; i < rookDescriptors.size(); i++)
 	{
 		r += vectors_distance(descriptor, rookDescriptors[i]);
 	}
-	cout << "bishop: " << b / 32/5 << "\n";
-	cout << "king: " << k / 16/5 << "\n";
-	cout << "pawn: " << p / 128/5 << "\n";
-	cout << "empty: " << e / 64/5 << "\n";
-	cout << "knight: " << kn / 32/5 << "\n";
-	cout << "queen: " << q / 32/5 << "\n";
-	cout << "rook: " << r / 32/5 << "\n";
+	cout << "bishop: " << b / bishopDescriptors.size() << "\n";
+	cout << "king: " << k / kingDescriptors.size() << "\n";
+	cout << "pawn: " << p / pawnDescriptors.size()<< "\n";
+	cout << "empty: " << e / emptyDescriptors.size() << "\n";
+	cout << "knight: " << kn / knightDescriptors.size() << "\n";
+	cout << "queen: " << q / queenDescriptors.size() << "\n";
+	cout << "rook: " << r / rookDescriptors.size() << "\n";
 	
 	waitKey(0);
 }
