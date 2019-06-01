@@ -10,6 +10,12 @@
 #include <experimental/filesystem>
 #include "PerspectiveProjection.h"
 #include "HoughTransformation.h"
+#include <unordered_map>
+#include <functional>
+#include <iterator>
+#include <algorithm>
+#include <cmath>
+#include <numeric>
 
 using namespace std;
 
@@ -717,7 +723,7 @@ void chessBoardDetection()
 	Size sizeImg(640, 640);
 	PerspectiveProjection perspectiveProjectionUtil;
 	HoughTransformation houghTransformationUtil;
-
+	
 	openFileDlg(path);
 
 	// while (openFileDlg(path))
@@ -907,6 +913,494 @@ void testCannyEdgeDetection()
 	}
 }
 
+
+float vectors_distance(vector<float> a,  vector<float> b)
+{
+	float sum = 0;
+
+	for(int i=0; i<a.size(); i++)
+	{
+		sum += ((a[i] - b[i])*(a[i] - b[i]));
+	}
+
+	return  sqrt(sum);
+}
+
+
+
+
+
+
+vector<vector<float>> bishopDescriptors;
+vector<vector<float>> kingDescriptors;
+vector<vector<float>> pawnDescriptors;
+vector<vector<float>> emptyDescriptors;
+vector<vector<float>> knightDescriptors;
+vector<vector<float>> queenDescriptors;
+vector<vector<float>> rookDescriptors;
+
+
+void trainBishopDescriptor()
+{
+	for (int i = 1; i <= 32; i++)
+	{
+		string filename = "Images/training_images/bishop/";
+		filename += std::to_string(i);
+		filename += ".jpg";
+		Mat img1 = imread(filename);
+		resize(img1, img1, Size(64, 128));
+		vector<float> descriptor1;
+		vector<float> descriptor2;
+		vector<float> descriptor3;
+		vector<float> descriptor4;
+		vector<float> descriptor5;
+		HOGDescriptor h(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+		h.compute(img1, descriptor1);
+		bishopDescriptors.push_back(descriptor1);
+
+		Rect r1(0, 16, 64, 112);
+		Mat img2 = img1(r1).clone();
+		resize(img2, img2, Size(64, 128));
+		h.compute(img2, descriptor2);
+		bishopDescriptors.push_back(descriptor2);
+
+		Rect r2(0, 32, 64, 96);
+		Mat img3 = img1(r2).clone();
+		resize(img3, img3, Size(64, 128));
+		h.compute(img3, descriptor3);
+		bishopDescriptors.push_back(descriptor3);
+
+		Rect r3(0, 48, 64, 80);
+		Mat img4 = img1(r3).clone();
+		resize(img4, img4, Size(64, 128));
+		h.compute(img4, descriptor4);
+		bishopDescriptors.push_back(descriptor4);
+
+		Rect r4(0, 64, 64, 64);
+		Mat img5 = img1(r4).clone();
+		resize(img5, img5, Size(64, 128));
+		h.compute(img5, descriptor5);
+		bishopDescriptors.push_back(descriptor5);
+	}
+}
+
+void trainKingDescriptor()
+{
+	for (int i = 1; i <= 16; i++)
+	{
+		string filename = "Images/training_images/king/";
+		filename += std::to_string(i);
+		filename += ".jpg";
+		Mat img1 = imread(filename);
+		resize(img1, img1, Size(64, 128));
+		vector<float> descriptor1;
+		vector<float> descriptor2;
+		vector<float> descriptor3;
+		vector<float> descriptor4;
+		vector<float> descriptor5;
+		HOGDescriptor h(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+		h.compute(img1, descriptor1);
+		kingDescriptors.push_back(descriptor1);
+
+
+		Rect r1(0, 16, 64, 112);
+		Mat img2 = img1(r1).clone();
+		resize(img2, img2, Size(64, 128));
+		h.compute(img2, descriptor2);
+		kingDescriptors.push_back(descriptor2);
+
+		Rect r2(0, 32, 64, 96);
+		Mat img3 = img1(r2).clone();
+		resize(img3, img3, Size(64, 128));
+		h.compute(img3, descriptor3);
+		kingDescriptors.push_back(descriptor3);
+
+		Rect r3(0, 48, 64, 80);
+		Mat img4 = img1(r3).clone();
+		resize(img4, img4, Size(64, 128));
+		h.compute(img4, descriptor4);
+		kingDescriptors.push_back(descriptor4);
+
+		Rect r4(0, 64, 64, 64);
+		Mat img5 = img1(r4).clone();
+		resize(img5, img5, Size(64, 128));
+		h.compute(img5, descriptor5);
+		kingDescriptors.push_back(descriptor5);
+	}
+}
+
+void trainPawnDescriptor()
+{
+	for (int i = 1; i <= 128; i++)
+	{
+		string filename = "Images/training_images/pawn/";
+		filename += std::to_string(i);
+		filename += ".jpg";
+		Mat img1 = imread(filename);
+		resize(img1, img1, Size(64, 128));
+		vector<float> descriptor1;
+		vector<float> descriptor2;
+		vector<float> descriptor3;
+		vector<float> descriptor4;
+		vector<float> descriptor5;
+		HOGDescriptor h(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+		h.compute(img1, descriptor1);
+		pawnDescriptors.push_back(descriptor1);
+
+
+		Rect r1(0, 16, 64, 112);
+		Mat img2 = img1(r1).clone();
+		resize(img2, img2, Size(64, 128));
+		h.compute(img2, descriptor2);
+		pawnDescriptors.push_back(descriptor2);
+
+		Rect r2(0, 32, 64, 96);
+		Mat img3 = img1(r2).clone();
+		resize(img3, img3, Size(64, 128));
+		h.compute(img3, descriptor3);
+		pawnDescriptors.push_back(descriptor3);
+
+		Rect r3(0, 48, 64, 80);
+		Mat img4 = img1(r3).clone();
+		resize(img4, img4, Size(64, 128));
+		h.compute(img4, descriptor4);
+		pawnDescriptors.push_back(descriptor4);
+
+		Rect r4(0, 64, 64, 64);
+		Mat img5 = img1(r4).clone();
+		resize(img5, img5, Size(64, 128));
+		h.compute(img5, descriptor5);
+		pawnDescriptors.push_back(descriptor5);
+	}
+}
+
+void trainEmptyDescriptor()
+{
+	for (int i = 1; i <= 64; i++)
+	{
+		string filename = "Images/training_images/empty/";
+		filename += std::to_string(i);
+		filename += ".jpg";
+		Mat img1 = imread(filename);
+		resize(img1, img1, Size(64, 128));
+		vector<float> descriptor1;
+		vector<float> descriptor2;
+		vector<float> descriptor3;
+		vector<float> descriptor4;
+		vector<float> descriptor5;
+		HOGDescriptor h(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+		h.compute(img1, descriptor1);
+		emptyDescriptors.push_back(descriptor1);
+
+
+		Rect r1(0, 16, 64, 112);
+		Mat img2 = img1(r1).clone();
+		resize(img2, img2, Size(64, 128));
+		h.compute(img2, descriptor2);
+		emptyDescriptors.push_back(descriptor2);
+
+		Rect r2(0, 32, 64, 96);
+		Mat img3 = img1(r2).clone();
+		resize(img3, img3, Size(64, 128));
+		h.compute(img3, descriptor3);
+		emptyDescriptors.push_back(descriptor3);
+
+		Rect r3(0, 48, 64, 80);
+		Mat img4 = img1(r3).clone();
+		resize(img4, img4, Size(64, 128));
+		h.compute(img4, descriptor4);
+		emptyDescriptors.push_back(descriptor4);
+
+		Rect r4(0, 64, 64, 64);
+		Mat img5 = img1(r4).clone();
+		resize(img5, img5, Size(64, 128));
+		h.compute(img5, descriptor5);
+		emptyDescriptors.push_back(descriptor5);
+	}
+}
+
+void trainKnightDescriptor()
+{
+	for (int i = 1; i <= 32; i++)
+	{
+		string filename = "Images/training_images/knight/";
+		filename += std::to_string(i);
+		filename += ".jpg";
+		Mat img1 = imread(filename);
+		resize(img1, img1, Size(64, 128));
+		vector<float> descriptor1;
+		vector<float> descriptor2;
+		vector<float> descriptor3;
+		vector<float> descriptor4;
+		vector<float> descriptor5;
+		HOGDescriptor h(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+		h.compute(img1, descriptor1);
+		knightDescriptors.push_back(descriptor1);
+
+
+		Rect r1(0, 16, 64, 112);
+		Mat img2 = img1(r1).clone();
+		resize(img2, img2, Size(64, 128));
+		h.compute(img2, descriptor2);
+		knightDescriptors.push_back(descriptor2);
+
+		Rect r2(0, 32, 64, 96);
+		Mat img3 = img1(r2).clone();
+		resize(img3, img3, Size(64, 128));
+		h.compute(img3, descriptor3);
+		knightDescriptors.push_back(descriptor3);
+
+		Rect r3(0, 48, 64, 80);
+		Mat img4 = img1(r3).clone();
+		resize(img4, img4, Size(64, 128));
+		h.compute(img4, descriptor4);
+		knightDescriptors.push_back(descriptor4);
+
+		Rect r4(0, 64, 64, 64);
+		Mat img5 = img1(r4).clone();
+		resize(img5, img5, Size(64, 128));
+		h.compute(img5, descriptor5);
+		knightDescriptors.push_back(descriptor5);
+	}
+}
+
+void trainQueenDescriptor()
+{
+	for (int i = 1; i <= 32; i++)
+	{
+		string filename = "Images/training_images/queen/";
+		filename += std::to_string(i);
+		filename += ".jpg";
+		Mat img1 = imread(filename);
+		resize(img1, img1, Size(64, 128));
+		vector<float> descriptor1;
+		vector<float> descriptor2;
+		vector<float> descriptor3;
+		vector<float> descriptor4;
+		vector<float> descriptor5;
+		HOGDescriptor h(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+		h.compute(img1, descriptor1);
+		queenDescriptors.push_back(descriptor1);
+
+
+		Rect r1(0, 16, 64, 112);
+		Mat img2 = img1(r1).clone();
+		resize(img2, img2, Size(64, 128));
+		h.compute(img2, descriptor2);
+		queenDescriptors.push_back(descriptor2);
+
+		Rect r2(0, 32, 64, 96);
+		Mat img3 = img1(r2).clone();
+		resize(img3, img3, Size(64, 128));
+		h.compute(img3, descriptor3);
+		queenDescriptors.push_back(descriptor3);
+
+		Rect r3(0, 48, 64, 80);
+		Mat img4 = img1(r3).clone();
+		resize(img4, img4, Size(64, 128));
+		h.compute(img4, descriptor4);
+		queenDescriptors.push_back(descriptor4);
+
+		Rect r4(0, 64, 64, 64);
+		Mat img5 = img1(r4).clone();
+		resize(img5, img5, Size(64, 128));
+		h.compute(img5, descriptor5);
+		queenDescriptors.push_back(descriptor5);
+	}
+}
+
+void trainRookDescriptor()
+{
+	for (int i = 1; i <= 32; i++)
+	{
+		string filename = "Images/training_images/rook/";
+		filename += std::to_string(i);
+		filename += ".jpg";
+		Mat img1 = imread(filename);
+		resize(img1, img1, Size(64, 128));
+		vector<float> descriptor1;
+		vector<float> descriptor2;
+		vector<float> descriptor3;
+		vector<float> descriptor4;
+		vector<float> descriptor5;
+		HOGDescriptor h(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+		h.compute(img1, descriptor1);
+		rookDescriptors.push_back(descriptor1);
+
+
+		Rect r1(0, 16, 64, 112);
+		Mat img2 = img1(r1).clone();
+		resize(img2, img2, Size(64, 128));
+		h.compute(img2, descriptor2);
+		rookDescriptors.push_back(descriptor2);
+
+		Rect r2(0, 32, 64, 96);
+		Mat img3 = img1(r2).clone();
+		resize(img3, img3, Size(64, 128));
+		h.compute(img3, descriptor3);
+		rookDescriptors.push_back(descriptor3);
+
+		Rect r3(0, 48, 64, 80);
+		Mat img4 = img1(r3).clone();
+		resize(img4, img4, Size(64, 128));
+		h.compute(img4, descriptor4);
+		rookDescriptors.push_back(descriptor4);
+
+		Rect r4(0, 64, 64, 64);
+		Mat img5 = img1(r4).clone();
+		resize(img5, img5, Size(64, 128));
+		h.compute(img5, descriptor5);
+		rookDescriptors.push_back(descriptor5);
+	}
+}
+
+void hog()
+{
+	//Mat img = imread("Images/old_training_images/bp/20160529_214403.jpg",CV_LOAD_IMAGE_COLOR);
+	//Mat img1 = imread("Images/old_training_images/bp/20160529_214403.jpg");
+	//Mat img2 = imread("Images/old_training_images/wr/20160529_214026.jpg");
+	//resize(img1, img1,Size(64,128));
+	//resize(img2, img2,Size(64,128));
+	/*
+	img.convertTo(img, CV_32F);
+	Mat gx, gy;
+	Sobel(img, gx, CV_32F, 1, 0, 1);
+	Sobel(img, gy, CV_32F, 0, 1, 1);
+	
+	Mat mag, angle;
+	cartToPolar(gx, gy, mag, angle, 1);
+
+	for(int i=0; i<angle.rows; i++)
+	{
+		for(int j=0; j<angle.cols; j++)
+		{
+			if(angle.at<float>(i,j)>=180)
+			{
+				angle.at<float>(i, j) -= 180;
+			}
+		}
+	}
+	float maximus = 0;
+	for (int i = 0; i < mag.rows; i++)
+	{
+		for (int j = 0; j < mag.cols; j++)
+		{
+			if(mag.at<float>(i, j)>maximus)
+			{
+				maximus = img.at<float>(i, j);
+			}
+		}
+		cout << maximus<<"\n";
+	}
+
+	unordered_map<int, vector<float>> histograms;
+	for(int i=0; i<img.rows; i+=8)
+	{
+		for(int j=0; j<img.cols; j+=8)
+		{
+			vector<float> hist(9,0);
+			//nucleu
+			for (int x = 0; x < 8; x++)
+			{
+				for (int y = 0; y < 8; y++)
+				{
+					int poz = (int)(angle.at<float>(i + x, j + y)/20)%9;
+					float dif = angle.at<float>(i + x, j + y) - poz * 20;
+					//cout << dif << "\n";
+					dif = dif * 100 / 20;
+					hist[poz%9] += mag.at<float>(i + x, j + y)*(100 - dif) / 100;
+					hist[(poz+1)%9] += mag.at<float>(i + x, j + y)*dif / 100;
+					if(i==8 && j==24)
+					{
+						cout << mag.at<float>(i + x, j + y)<<" ";
+					}
+				}
+				if (i == 8 && j == 24)
+				{
+					cout << "\n";
+				}
+			}
+			
+			histograms[i/8+j/8] = hist;
+		}
+	}
+
+	
+
+	for(auto it : histograms[0])
+	{
+		//cout << it << " ";
+	}
+
+	//cout << img.rows << " " << img.cols;
+	imshow("image", img);
+	imshow("gx", gx);
+	imshow("gy", gy);
+	imshow("mag", mag);
+	waitKey(0);
+	*/
+
+	trainBishopDescriptor();
+	trainKingDescriptor();
+	trainPawnDescriptor();
+	trainEmptyDescriptor();
+	trainKnightDescriptor();
+	trainQueenDescriptor();
+	trainRookDescriptor();
+	
+	Mat img = imread("Images/TEST.png");
+	resize(img, img, Size(64, 128));
+	imshow("img", img);
+	vector<float> descriptor;
+	HOGDescriptor h(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+	h.compute(img, descriptor);
+	
+	float b=0;
+	for(int i=0; i<32*5; i++)
+	{
+		b+=vectors_distance(descriptor, bishopDescriptors[i]);
+	}
+	float k = 0;
+	for (int i = 0; i < 16*5; i++)
+	{
+		k+=vectors_distance(descriptor, kingDescriptors[i]);
+	}
+	float p = 0;
+	for (int i = 0; i < 128*5; i++)
+	{
+		p+=vectors_distance(descriptor, pawnDescriptors[i]);
+	}
+	float e = 0;
+	for (int i = 0; i < 64*5; i++)
+	{
+		e += vectors_distance(descriptor, emptyDescriptors[i]);
+	}
+	float kn = 0;
+	for (int i = 0; i < 32*5; i++)
+	{
+		kn += vectors_distance(descriptor, knightDescriptors[i]);
+	}
+	float q = 0;
+	for (int i = 0; i < 32*5; i++)
+	{
+		q += vectors_distance(descriptor, queenDescriptors[i]);
+	}
+	float r = 0;
+	for (int i = 0; i < 32*5; i++)
+	{
+		r += vectors_distance(descriptor, rookDescriptors[i]);
+	}
+	cout << "bishop: " << b / 32/5 << "\n";
+	cout << "king: " << k / 16/5 << "\n";
+	cout << "pawn: " << p / 128/5 << "\n";
+	cout << "empty: " << e / 64/5 << "\n";
+	cout << "knight: " << kn / 32/5 << "\n";
+	cout << "queen: " << q / 32/5 << "\n";
+	cout << "rook: " << r / 32/5 << "\n";
+	
+	waitKey(0);
+}
+
 int main()
 {
 	int op;
@@ -984,6 +1478,9 @@ int main()
 			break;
 		case 15:
 			testHoughTransformation();
+			break;
+		case 16:
+			hog();
 			break;
 		}
 	}
