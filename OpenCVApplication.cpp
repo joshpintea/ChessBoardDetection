@@ -1349,6 +1349,122 @@ void chessBoardDetection()
 	waitKey();
 }
 
+void trainHog()
+{
+	trainBishopDescriptor();
+	trainKingDescriptor();
+	trainPawnDescriptor();
+	trainEmptyDescriptor();
+	trainKnightDescriptor();
+	trainQueenDescriptor();
+	trainRookDescriptor();
+}
+
+vector<Point> points;
+
+void extractBoard(Mat img)
+{
+	Size sizeImg(640, 640);
+	PerspectiveProjection perspectiveProjectionUtil;
+
+	Point tl, tr, bl, br;
+	perspectiveProjectionUtil.getBorderBoxes(points, tl, tr, bl, br);
+
+	Point2f sourcePoints[4] = { tl, tr, bl, br };
+	Point2f destinationPoints1[4] = {
+		Point2f(0, 0), Point2f(sizeImg.height, 0), Point2f(0, sizeImg.width), Point2f(sizeImg.height, sizeImg.width)
+	};
+
+	Mat projectionMatrix1 = perspectiveProjectionUtil.getPerspectiveTransform(sourcePoints, destinationPoints1, OPEN_CV);
+	Mat imgProjected1 = perspectiveProjectionUtil.perspectiveProjection(projectionMatrix1, img, OPEN_CV, sizeImg);
+
+
+	vector<vector<Mat>> board;
+
+	for (int i = 0; i < 8; i++)
+	{
+		vector<Mat> m;
+		board.push_back(m);
+	}
+
+	int s = 0;
+	char imageName[512];
+	// extragere piese de pe tabla de sah.
+	for (int y = 0; y < 7; y++) {
+		for (int x = 0; x < 8; x++)
+		{
+			if (y == 0)
+			{
+				Rect r1(x * 80, y * 80, 80, 80);
+				Mat img2 = imgProjected1(r1).clone();
+				board[0].push_back(img2);
+
+				Rect r2(x * 80, 0, 80, 160);
+				Mat img3 = imgProjected1(r2).clone();
+				board[1].push_back(img3);
+			}
+			else
+			{
+				Rect r1(x * 80, y * 80, 80, 160);
+				Mat img2 = imgProjected1(r1).clone();
+
+				board[y + 1].push_back(img2);
+			}
+
+		}
+	}
+
+
+
+	for (int i = 0; i < 8; i++)
+	{
+		for (int j = 0; j < 8; j++)
+		{
+			cout << i << " " << j << std::endl << std::endl;
+			hog(board[i][j]);
+			cout << std::endl;
+			cout << std::endl;
+		}
+	}
+
+	imshow("Board projected", imgProjected1);
+}
+
+void onMouseClick(int event, int x, int y, int flags, void *param)
+{
+	if (event == CV_EVENT_LBUTTONDOWN && points.size() != 4)
+	{
+		Mat &img = *((Mat*)(param)); // 1st cast it back, then deref
+		circle(img, Point(x, y), 5, Scalar(0, 255, 0), 1);
+
+		points.push_back(Point(x, y));
+
+		imshow("Original image", img);
+
+		if (points.size() == 4)
+		{
+			extractBoard(img);
+		}
+	}
+}
+
+void chessBoardReconstruct()
+{
+	char path[MAX_PATH];
+	openFileDlg(path);
+
+	Mat grayWithoutNoises, imgResized;
+	Mat source = imread(path, IMREAD_COLOR);
+	points.clear();
+	// resize image
+	resizeImg(source, imgResized, 1024, true);
+	namedWindow("Original image");
+	imshow("Original image", imgResized);
+	setMouseCallback("Original image", onMouseClick, &imgResized);
+	waitKey();
+}
+
+
 int main()
 {
 	int op;
@@ -1374,6 +1490,8 @@ int main()
 		printf(" 13 - Canny edge detection\n");
 		printf(" 14 -Remove red chanel\n");
 		printf(" 15 - Test Hough Transformation\n");
+		printf(" 16 - Chessboard reconstruction\n");
+		printf(" 17 - Train hog\n");
 		printf(" 0 - Exit\n\n");
 		printf("Option: ");
 		scanf("%d", &op);
@@ -1429,6 +1547,11 @@ int main()
 			break;
 		case 16:
 			// hog();
+			chessBoardReconstruct();
+			break;
+		case 17:
+			// hog();
+			trainHog();
 			break;
 		}
 	}
