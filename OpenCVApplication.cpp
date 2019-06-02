@@ -687,7 +687,7 @@ vector<vector<float>> knightDescriptors;
 vector<vector<float>> queenDescriptors;
 vector<vector<float>> rookDescriptors;
 
-string basePath = "D:/MyWorkSpace/Image Processing/ChessBoardDetection/ChessBoardDetection/Images/training_images/";
+string basePath = "C:/Users/Bobossuno/Desktop/PI/ChessBoardDetection/Images/training_images/";
 
 void trainBishopDescriptor()
 {
@@ -707,7 +707,7 @@ void trainBishopDescriptor()
 		h.compute(img1, descriptor1);
 		bishopDescriptors.push_back(descriptor1);
 
-		/*
+		
 		Rect r1(0, 16, 64, 112);
 		Mat img2 = img1(r1).clone();
 		resize(img2, img2, Size(64, 128));
@@ -719,7 +719,7 @@ void trainBishopDescriptor()
 		resize(img3, img3, Size(64, 128));
 		h.compute(img3, descriptor3);
 		bishopDescriptors.push_back(descriptor3);
-
+		/*
 		Rect r3(0, 48, 64, 80);
 		Mat img4 = img1(r3).clone();
 		resize(img4, img4, Size(64, 128));
@@ -796,16 +796,17 @@ void trainPawnDescriptor()
 		vector<float> descriptor4;
 		vector<float> descriptor5;
 		HOGDescriptor h(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+		/*
 		h.compute(img1, descriptor1);
 		pawnDescriptors.push_back(descriptor1);
 
-		/*
+		
 		Rect r1(0, 16, 64, 112);
 		Mat img2 = img1(r1).clone();
 		resize(img2, img2, Size(64, 128));
 		h.compute(img2, descriptor2);
 		pawnDescriptors.push_back(descriptor2);
-
+		*/
 		Rect r2(0, 32, 64, 96);
 		Mat img3 = img1(r2).clone();
 		resize(img3, img3, Size(64, 128));
@@ -817,7 +818,7 @@ void trainPawnDescriptor()
 		resize(img4, img4, Size(64, 128));
 		h.compute(img4, descriptor4);
 		pawnDescriptors.push_back(descriptor4);
-
+		/*
 		Rect r4(0, 64, 64, 64);
 		Mat img5 = img1(r4).clone();
 		resize(img5, img5, Size(64, 128));
@@ -829,7 +830,7 @@ void trainPawnDescriptor()
 
 void trainEmptyDescriptor()
 {
-	for (int i = 1; i <= 64; i++)
+	for (int i = 1; i <= 32; i++)
 	{
 		string filename = basePath + "empty/";
 		filename += std::to_string(i);
@@ -891,7 +892,7 @@ void trainKnightDescriptor()
 		h.compute(img1, descriptor1);
 		knightDescriptors.push_back(descriptor1);
 
-		/*
+		
 		Rect r1(0, 16, 64, 112);
 		Mat img2 = img1(r1).clone();
 		resize(img2, img2, Size(64, 128));
@@ -903,7 +904,7 @@ void trainKnightDescriptor()
 		resize(img3, img3, Size(64, 128));
 		h.compute(img3, descriptor3);
 		knightDescriptors.push_back(descriptor3);
-
+		/*
 		Rect r3(0, 48, 64, 80);
 		Mat img4 = img1(r3).clone();
 		resize(img4, img4, Size(64, 128));
@@ -980,16 +981,17 @@ void trainRookDescriptor()
 		vector<float> descriptor4;
 		vector<float> descriptor5;
 		HOGDescriptor h(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+		/*
 		h.compute(img1, descriptor1);
 		rookDescriptors.push_back(descriptor1);
 
-		/*
+		
 		Rect r1(0, 16, 64, 112);
 		Mat img2 = img1(r1).clone();
 		resize(img2, img2, Size(64, 128));
 		h.compute(img2, descriptor2);
 		rookDescriptors.push_back(descriptor2);
-
+		*/
 		Rect r2(0, 32, 64, 96);
 		Mat img3 = img1(r2).clone();
 		resize(img3, img3, Size(64, 128));
@@ -1001,7 +1003,7 @@ void trainRookDescriptor()
 		resize(img4, img4, Size(64, 128));
 		h.compute(img4, descriptor4);
 		rookDescriptors.push_back(descriptor4);
-
+		/*
 		Rect r4(0, 64, 64, 64);
 		Mat img5 = img1(r4).clone();
 		resize(img5, img5, Size(64, 128));
@@ -1009,6 +1011,24 @@ void trainRookDescriptor()
 		rookDescriptors.push_back(descriptor5);
 		*/
 	}
+}
+
+bool myCompare(pair<float, int> a, pair<float, int> b)
+{
+	return a.first < b.first;
+}
+string cat[] = { "bishop","pawn","knight","king","queen","empty","rook" };
+string decide(float b, float p, float kn, float k, float q, float e, float r)
+{
+	vector<pair<float, int>> pairs;
+	pairs.push_back(make_pair(b, 0));
+	pairs.push_back(make_pair(p, 1));
+	pairs.push_back(make_pair(kn, 2));
+	pairs.push_back(make_pair(k, 3));
+	pairs.push_back(make_pair(q, 4));
+	pairs.push_back(make_pair(e, 5));
+	pairs.push_back(make_pair(r, 6));
+	return cat[min_element(pairs.begin(), pairs.end(), myCompare)->second];
 }
 
 void hog(Mat sourceImg)
@@ -1147,6 +1167,7 @@ void hog(Mat sourceImg)
 	cout << "knight: " << kn / knightDescriptors.size() << "\n";
 	cout << "queen: " << q / queenDescriptors.size() << "\n";
 	cout << "rook: " << r / rookDescriptors.size() << "\n";
+	cout << decide(b / bishopDescriptors.size(), p / pawnDescriptors.size(), kn / knightDescriptors.size(), k / kingDescriptors.size(), q / queenDescriptors.size(), e / emptyDescriptors.size(), r / rookDescriptors.size());
 }
 
 
