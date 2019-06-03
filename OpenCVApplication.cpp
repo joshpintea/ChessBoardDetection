@@ -1670,16 +1670,16 @@ void extractChessBoard2(Mat img)
 		}
 	}
 
-	for (int i = 0; i < 9; i++)
-	{
-		for (int j = 0; j < 9; j++)
-		{
-			circle(img, chessBoardCorners[i][j], 5, Scalar(0, 255, 0), 1);
-		}
-	}
+	// for (int i = 0; i < 9; i++)
+	// {
+	// 	for (int j = 0; j < 9; j++)
+	// 	{
+	// 		circle(img, chessBoardCorners[i][j], 5, Scalar(0, 255, 0), 1);
+	// 	}
+	// }
 
-	imshow("ss", img);
-	waitKey();
+	// imshow("ss", img);
+	// waitKey();
 
 	int r = 1, c = 1;
 	vector<vector<Mat>> board;
@@ -1698,15 +1698,10 @@ void extractChessBoard2(Mat img)
 			Point bll = chessBoardCorners[r][c - 1];
 			Point brr = chessBoardCorners[r][c];
 
-			Point lx = (tll.x < bll.x) ? tll : bll;
-			Point rx = (trr.x > brr.x) ? trr : brr;
-
-			Point ly = (bll.y > brr.y) ? bll : brr;
-
-			int width = rx.x - lx.x;
+			int width = brr.x - bll.x;
 			int height = bll.y - tll.y + 5;
 
-			for (int h = 140; h > height; h-=2)
+			for (int h = 140; h > height; h-=20)
 			{
 				if ((bll.y - h) >= 0)
 				{
@@ -1714,7 +1709,7 @@ void extractChessBoard2(Mat img)
 					break;
 				}
 			}
-			Rect rr(lx.x, bll.y - height, width, height);
+			Rect rr(bll.x, bll.y - height, width, height);
 			Mat i = img(rr).clone();
 
 			board[r-1].push_back(i);
