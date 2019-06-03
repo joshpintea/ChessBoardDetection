@@ -684,7 +684,7 @@ vector<vector<float>> knightDescriptors;
 vector<vector<float>> queenDescriptors;
 vector<vector<float>> rookDescriptors;
 
-string basePath = "D:/MyWorkSpace/Image Processing/ChessBoardDetection/ChessBoardDetection/Images/training_images/";
+string basePath = "C:/Users/Bobossuno/Desktop/PI/ChessBoardDetection/Images/training_images/";
 
 void trainBishopDescriptor()
 {
@@ -1670,6 +1670,7 @@ void extractChessBoard2(Mat img)
 		}
 	}
 
+	/*
 	for (int i = 0; i < 9; i++)
 	{
 		for (int j = 0; j < 9; j++)
@@ -1680,6 +1681,7 @@ void extractChessBoard2(Mat img)
 
 	imshow("ss", img);
 	waitKey();
+	*/
 
 	int r = 1, c = 1;
 	vector<vector<Mat>> board;
@@ -1698,7 +1700,7 @@ void extractChessBoard2(Mat img)
 			Point bll = chessBoardCorners[r][c - 1];
 			Point brr = chessBoardCorners[r][c];
 
-			Point lx = (tll.x < bll.x) ? tll : bll;
+			Point lx = (tll.x < bll.x) ? bll : tll;
 			Point rx = (trr.x > brr.x) ? trr : brr;
 
 			Point ly = (bll.y > brr.y) ? bll : brr;
@@ -1728,7 +1730,7 @@ void extractChessBoard2(Mat img)
 			imshow("ss",board[i][j]);
 			string res = hog(board[i][j]);
 			cout << res << " ";
-			waitKey();
+			imwrite("C:/Users/Bobossuno/Desktop/PI/ChessBoardDetection/Images/training_images/projres/" + to_string(i) + to_string(j) + ".jpg", board[i][j]);
 		}
 		cout << endl;
 	}
