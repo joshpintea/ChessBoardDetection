@@ -562,7 +562,6 @@ bool compareContourAreas(std::vector<cv::Point> contour1, std::vector<cv::Point>
 }
 
 
-
 void testHoughTransformation()
 {
 	char path[MAX_PATH];
@@ -664,19 +663,17 @@ void testCannyEdgeDetection()
 }
 
 
-float vectors_distance(vector<float> a,  vector<float> b)
+float vectors_distance(vector<float> a, vector<float> b)
 {
 	float sum = 0;
 
-	for(int i=0; i<a.size(); i++)
+	for (int i = 0; i < a.size(); i++)
 	{
-		sum += ((a[i] - b[i])*(a[i] - b[i]));
+		sum += ((a[i] - b[i]) * (a[i] - b[i]));
 	}
 
-	return  sqrt(sum);
+	return sqrt(sum);
 }
-
-
 
 
 vector<vector<float>> bishopDescriptors;
@@ -687,7 +684,7 @@ vector<vector<float>> knightDescriptors;
 vector<vector<float>> queenDescriptors;
 vector<vector<float>> rookDescriptors;
 
-string basePath = "C:/Users/Bobossuno/Desktop/PI/ChessBoardDetection/Images/training_images/";
+string basePath = "D:/MyWorkSpace/Image Processing/ChessBoardDetection/ChessBoardDetection/Images/training_images/";
 
 void trainBishopDescriptor()
 {
@@ -707,7 +704,7 @@ void trainBishopDescriptor()
 		h.compute(img1, descriptor1);
 		bishopDescriptors.push_back(descriptor1);
 
-		
+		/*
 		Rect r1(0, 16, 64, 112);
 		Mat img2 = img1(r1).clone();
 		resize(img2, img2, Size(64, 128));
@@ -719,7 +716,7 @@ void trainBishopDescriptor()
 		resize(img3, img3, Size(64, 128));
 		h.compute(img3, descriptor3);
 		bishopDescriptors.push_back(descriptor3);
-		/*
+		
 		Rect r3(0, 48, 64, 80);
 		Mat img4 = img1(r3).clone();
 		resize(img4, img4, Size(64, 128));
@@ -759,7 +756,7 @@ void trainKingDescriptor()
 		resize(img2, img2, Size(64, 128));
 		h.compute(img2, descriptor2);
 		kingDescriptors.push_back(descriptor2);
-
+		
 		Rect r2(0, 32, 64, 96);
 		Mat img3 = img1(r2).clone();
 		resize(img3, img3, Size(64, 128));
@@ -796,29 +793,29 @@ void trainPawnDescriptor()
 		vector<float> descriptor4;
 		vector<float> descriptor5;
 		HOGDescriptor h(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
-		/*
+
 		h.compute(img1, descriptor1);
 		pawnDescriptors.push_back(descriptor1);
 
-		
+		/*
 		Rect r1(0, 16, 64, 112);
 		Mat img2 = img1(r1).clone();
 		resize(img2, img2, Size(64, 128));
 		h.compute(img2, descriptor2);
 		pawnDescriptors.push_back(descriptor2);
-		*/
+		
 		Rect r2(0, 32, 64, 96);
 		Mat img3 = img1(r2).clone();
 		resize(img3, img3, Size(64, 128));
 		h.compute(img3, descriptor3);
 		pawnDescriptors.push_back(descriptor3);
-
+		
 		Rect r3(0, 48, 64, 80);
 		Mat img4 = img1(r3).clone();
 		resize(img4, img4, Size(64, 128));
 		h.compute(img4, descriptor4);
 		pawnDescriptors.push_back(descriptor4);
-		/*
+		
 		Rect r4(0, 64, 64, 64);
 		Mat img5 = img1(r4).clone();
 		resize(img5, img5, Size(64, 128));
@@ -892,7 +889,7 @@ void trainKnightDescriptor()
 		h.compute(img1, descriptor1);
 		knightDescriptors.push_back(descriptor1);
 
-		
+		/*
 		Rect r1(0, 16, 64, 112);
 		Mat img2 = img1(r1).clone();
 		resize(img2, img2, Size(64, 128));
@@ -904,7 +901,7 @@ void trainKnightDescriptor()
 		resize(img3, img3, Size(64, 128));
 		h.compute(img3, descriptor3);
 		knightDescriptors.push_back(descriptor3);
-		/*
+		
 		Rect r3(0, 48, 64, 80);
 		Mat img4 = img1(r3).clone();
 		resize(img4, img4, Size(64, 128));
@@ -922,7 +919,7 @@ void trainKnightDescriptor()
 
 void trainQueenDescriptor()
 {
-	for (int i = 1; i <= 32; i++)
+	for (int i = 1; i <= 16; i++)
 	{
 		string filename = basePath + "queen/";
 		filename += std::to_string(i);
@@ -944,7 +941,7 @@ void trainQueenDescriptor()
 		resize(img2, img2, Size(64, 128));
 		h.compute(img2, descriptor2);
 		queenDescriptors.push_back(descriptor2);
-
+		
 		Rect r2(0, 32, 64, 96);
 		Mat img3 = img1(r2).clone();
 		resize(img3, img3, Size(64, 128));
@@ -981,29 +978,29 @@ void trainRookDescriptor()
 		vector<float> descriptor4;
 		vector<float> descriptor5;
 		HOGDescriptor h(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
-		/*
+
 		h.compute(img1, descriptor1);
 		rookDescriptors.push_back(descriptor1);
 
-		
+		/*
 		Rect r1(0, 16, 64, 112);
 		Mat img2 = img1(r1).clone();
 		resize(img2, img2, Size(64, 128));
 		h.compute(img2, descriptor2);
 		rookDescriptors.push_back(descriptor2);
-		*/
+		
 		Rect r2(0, 32, 64, 96);
 		Mat img3 = img1(r2).clone();
 		resize(img3, img3, Size(64, 128));
 		h.compute(img3, descriptor3);
 		rookDescriptors.push_back(descriptor3);
-
+		
 		Rect r3(0, 48, 64, 80);
 		Mat img4 = img1(r3).clone();
 		resize(img4, img4, Size(64, 128));
 		h.compute(img4, descriptor4);
 		rookDescriptors.push_back(descriptor4);
-		/*
+		
 		Rect r4(0, 64, 64, 64);
 		Mat img5 = img1(r4).clone();
 		resize(img5, img5, Size(64, 128));
@@ -1017,7 +1014,9 @@ bool myCompare(pair<float, int> a, pair<float, int> b)
 {
 	return a.first < b.first;
 }
-string cat[] = { "bishop","pawn","knight","king","queen","empty","rook" };
+
+string cat[] = {"bishop", "pawn", "knight", "king", "queen", "empty", "rook"};
+
 string decide(float b, float p, float kn, float k, float q, float e, float r)
 {
 	vector<pair<float, int>> pairs;
@@ -1031,114 +1030,31 @@ string decide(float b, float p, float kn, float k, float q, float e, float r)
 	return cat[min_element(pairs.begin(), pairs.end(), myCompare)->second];
 }
 
-void hog(Mat sourceImg)
+int debugHog = 0;
+
+string hog(Mat sourceImg)
 {
-	//Mat img = imread("Images/old_training_images/bp/20160529_214403.jpg",CV_LOAD_IMAGE_COLOR);
-	//Mat img1 = imread("Images/old_training_images/bp/20160529_214403.jpg");
-	//Mat img2 = imread("Images/old_training_images/wr/20160529_214026.jpg");
-	//resize(img1, img1,Size(64,128));
-	//resize(img2, img2,Size(64,128));
-	/*
-	img.convertTo(img, CV_32F);
-	Mat gx, gy;
-	Sobel(img, gx, CV_32F, 1, 0, 1);
-	Sobel(img, gy, CV_32F, 0, 1, 1);
-	
-	Mat mag, angle;
-	cartToPolar(gx, gy, mag, angle, 1);
-
-	for(int i=0; i<angle.rows; i++)
-	{
-		for(int j=0; j<angle.cols; j++)
-		{
-			if(angle.at<float>(i,j)>=180)
-			{
-				angle.at<float>(i, j) -= 180;
-			}
-		}
-	}
-	float maximus = 0;
-	for (int i = 0; i < mag.rows; i++)
-	{
-		for (int j = 0; j < mag.cols; j++)
-		{
-			if(mag.at<float>(i, j)>maximus)
-			{
-				maximus = img.at<float>(i, j);
-			}
-		}
-		cout << maximus<<"\n";
-	}
-
-	unordered_map<int, vector<float>> histograms;
-	for(int i=0; i<img.rows; i+=8)
-	{
-		for(int j=0; j<img.cols; j+=8)
-		{
-			vector<float> hist(9,0);
-			//nucleu
-			for (int x = 0; x < 8; x++)
-			{
-				for (int y = 0; y < 8; y++)
-				{
-					int poz = (int)(angle.at<float>(i + x, j + y)/20)%9;
-					float dif = angle.at<float>(i + x, j + y) - poz * 20;
-					//cout << dif << "\n";
-					dif = dif * 100 / 20;
-					hist[poz%9] += mag.at<float>(i + x, j + y)*(100 - dif) / 100;
-					hist[(poz+1)%9] += mag.at<float>(i + x, j + y)*dif / 100;
-					if(i==8 && j==24)
-					{
-						cout << mag.at<float>(i + x, j + y)<<" ";
-					}
-				}
-				if (i == 8 && j == 24)
-				{
-					cout << "\n";
-				}
-			}
-			
-			histograms[i/8+j/8] = hist;
-		}
-	}
-
-	
-
-	for(auto it : histograms[0])
-	{
-		//cout << it << " ";
-	}
-
-	//cout << img.rows << " " << img.cols;
-	imshow("image", img);
-	imshow("gx", gx);
-	imshow("gy", gy);
-	imshow("mag", mag);
-	waitKey(0);
-	*/
-
-	
 	Mat img;
 	resize(sourceImg, img, Size(64, 128));
 	imshow("img", img);
 	vector<float> descriptor;
 	HOGDescriptor h(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
 	h.compute(img, descriptor);
-	
-	float b=0;
-	for(int i=0; i<bishopDescriptors.size(); i++)
+
+	float b = 0;
+	for (int i = 0; i < bishopDescriptors.size(); i++)
 	{
-		b+=vectors_distance(descriptor, bishopDescriptors[i]);
+		b += vectors_distance(descriptor, bishopDescriptors[i]);
 	}
 	float k = 0;
 	for (int i = 0; i < kingDescriptors.size(); i++)
 	{
-		k+=vectors_distance(descriptor, kingDescriptors[i]);
+		k += vectors_distance(descriptor, kingDescriptors[i]);
 	}
 	float p = 0;
 	for (int i = 0; i < pawnDescriptors.size(); i++)
 	{
-		p+=vectors_distance(descriptor, pawnDescriptors[i]);
+		p += vectors_distance(descriptor, pawnDescriptors[i]);
 	}
 	float e = 0;
 	for (int i = 0; i < emptyDescriptors.size(); i++)
@@ -1160,14 +1076,22 @@ void hog(Mat sourceImg)
 	{
 		r += vectors_distance(descriptor, rookDescriptors[i]);
 	}
-	cout << "bishop: " << b / bishopDescriptors.size() << "\n";
-	cout << "king: " << k / kingDescriptors.size() << "\n";
-	cout << "pawn: " << p / pawnDescriptors.size()<< "\n";
-	cout << "empty: " << e / emptyDescriptors.size() << "\n";
-	cout << "knight: " << kn / knightDescriptors.size() << "\n";
-	cout << "queen: " << q / queenDescriptors.size() << "\n";
-	cout << "rook: " << r / rookDescriptors.size() << "\n";
-	cout << decide(b / bishopDescriptors.size(), p / pawnDescriptors.size(), kn / knightDescriptors.size(), k / kingDescriptors.size(), q / queenDescriptors.size(), e / emptyDescriptors.size(), r / rookDescriptors.size());
+	string res = decide(b / bishopDescriptors.size(), p / pawnDescriptors.size(), kn / knightDescriptors.size(),
+	                    k / kingDescriptors.size(), q / queenDescriptors.size(), e / emptyDescriptors.size(),
+	                    r / rookDescriptors.size());
+	if (debugHog)
+	{
+		cout << "bishop: " << b / bishopDescriptors.size() << "\n";
+		cout << "king: " << k / kingDescriptors.size() << "\n";
+		cout << "pawn: " << p / pawnDescriptors.size() << "\n";
+		cout << "empty: " << e / emptyDescriptors.size() << "\n";
+		cout << "knight: " << kn / knightDescriptors.size() << "\n";
+		cout << "queen: " << q / queenDescriptors.size() << "\n";
+		cout << "rook: " << r / rookDescriptors.size() << "\n";
+		cout << res;
+	}
+
+	return res;
 }
 
 
@@ -1185,14 +1109,15 @@ bool compareOrizontal(pair<Point2f, Point2f> p1, pair<Point2f, Point2f> p2)
 }
 
 bool intersection2(Point2f o1, Point2f p1, Point2f o2, Point2f p2,
-	Point2f& r)
+                   Point2f& r)
 {
 	Point2f x = o2 - o1;
 	Point2f d1 = p1 - o1;
 	Point2f d2 = p2 - o2;
 
 	float cross = d1.x * d2.y - d1.y * d2.x;
-	if (abs(cross) < /*EPS*/1.0) {
+	if (abs(cross) < /*EPS*/1.0)
+	{
 		return false;
 	}
 
@@ -1214,8 +1139,8 @@ void onTrackBarTresh(int, void*)
 
 	vector<pair<Point2f, Point2f>> verticalLines;
 	vector<pair<Point2f, Point2f>> orizontalLines;
-	int *cols = (int*)calloc((int)edges.cols, sizeof(int));
-	int *rows = (int*)calloc((int)edges.rows, sizeof(int));
+	int* cols = (int*)calloc((int)edges.cols, sizeof(int));
+	int* rows = (int*)calloc((int)edges.rows, sizeof(int));
 	bool d = false;
 	for (auto l : lines)
 	{
@@ -1229,11 +1154,13 @@ void onTrackBarTresh(int, void*)
 			d = false;
 			for (int y = p1.y - 5; y < p1.y + 5; y++)
 			{
-				if (y >= 0 && y < edges.rows) {
+				if (y >= 0 && y < edges.rows)
+				{
 					d |= rows[y];
 				}
 			}
-			if (!d) {
+			if (!d)
+			{
 				orizontalLines.push_back(make_pair(p1, p2));
 			}
 		}
@@ -1242,11 +1169,13 @@ void onTrackBarTresh(int, void*)
 			d = false;
 			for (int x = p1.x - 5; x < p1.x + 5; x++)
 			{
-				if (x >= 0 && x < edges.cols) {
+				if (x >= 0 && x < edges.cols)
+				{
 					d |= cols[x];
 				}
 			}
-			if (!d) {
+			if (!d)
+			{
 				verticalLines.push_back(make_pair(p1, p2));
 			}
 		}
@@ -1258,10 +1187,14 @@ void onTrackBarTresh(int, void*)
 	int sizeO = orizontalLines.size();
 	int sizeV = verticalLines.size();
 
-	intersection2(verticalLines[1].first, verticalLines[1].second, orizontalLines[1].first, orizontalLines[1].second, tl);
-	intersection2(verticalLines[1].first, verticalLines[1].second, orizontalLines[sizeO - 1].first, orizontalLines[sizeO - 1].second, bl);
-	intersection2(verticalLines[sizeV - 1].first, verticalLines[sizeV - 1].second, orizontalLines[1].first, orizontalLines[1].second, tr);
-	intersection2(verticalLines[sizeV - 1].first, verticalLines[sizeV - 1].second, orizontalLines[sizeO - 1].first, orizontalLines[sizeO - 1].second, br);
+	intersection2(verticalLines[1].first, verticalLines[1].second, orizontalLines[1].first, orizontalLines[1].second,
+	              tl);
+	intersection2(verticalLines[1].first, verticalLines[1].second, orizontalLines[sizeO - 1].first,
+	              orizontalLines[sizeO - 1].second, bl);
+	intersection2(verticalLines[sizeV - 1].first, verticalLines[sizeV - 1].second, orizontalLines[1].first,
+	              orizontalLines[1].second, tr);
+	intersection2(verticalLines[sizeV - 1].first, verticalLines[sizeV - 1].second, orizontalLines[sizeO - 1].first,
+	              orizontalLines[sizeO - 1].second, br);
 
 	for (auto p : verticalLines)
 	{
@@ -1278,24 +1211,30 @@ void onTrackBarTresh(int, void*)
 	};
 
 	PerspectiveProjection perspectiveProjectionUtil;
-	Point2f sourcePoints[4] = { tl, tr, bl, br };
+	Point2f sourcePoints[4] = {tl, tr, bl, br};
 	// projection with opencv implementation
-	Mat projectionMatrix1 = perspectiveProjectionUtil.getPerspectiveTransform(sourcePoints, destinationPoints1, OPEN_CV);
-	Mat imgProjected1 = perspectiveProjectionUtil.perspectiveProjection(projectionMatrix1, imgResized, OPEN_CV, sizeImg);
+	Mat projectionMatrix1 = perspectiveProjectionUtil.
+		getPerspectiveTransform(sourcePoints, destinationPoints1, OPEN_CV);
+	Mat imgProjected1 = perspectiveProjectionUtil.
+		perspectiveProjection(projectionMatrix1, imgResized, OPEN_CV, sizeImg);
 
 
 	vector<vector<Mat>> board;
+	vector<vector<string>> boardRes;
 
 	for (int i = 0; i < 8; i++)
 	{
 		vector<Mat> m;
+		vector<string> ss;
 		board.push_back(m);
+		boardRes.push_back(ss);
 	}
 
 	int s = 0;
 	char imageName[512];
 	// extragere piese de pe tabla de sah.
-	for (int y = 0; y < 7; y++) {
+	for (int y = 0; y < 7; y++)
+	{
 		for (int x = 0; x < 8; x++)
 		{
 			if (y == 0)
@@ -1315,22 +1254,31 @@ void onTrackBarTresh(int, void*)
 
 				board[y + 1].push_back(img2);
 			}
-
 		}
 	}
 
 
-	
-	for (int i = 0; i < 8 ; i++)
+	for (int i = 0; i < 8; i++)
 	{
 		for (int j = 0; j < 8; j++)
 		{
-			cout << i << " " << j << std::endl << std::endl;
-			hog(board[i][j]);
-			cout << std::endl;
-			cout << std::endl;
+			// cout << i << " " << j << std::endl << std::endl;
+			string r = hog(board[i][j]);
+			boardRes[i].push_back(r);
+			// cout << std::endl;
+			// cout << std::endl;
 		}
 	}
+
+	for (int i = 0; i < 8; i++)
+	{
+		for (int j = 0; j < 8; j++)
+		{
+			cout << boardRes[i][j] << " ";
+		}
+		cout << endl;
+	}
+
 
 	imshow("Parallel lines", imgs);
 	imshow("Chessboard projection", imgProjected1);
@@ -1343,10 +1291,10 @@ void chessBoardDetection()
 
 	Mat grayWithoutNoises;
 	Mat source = imread(path, IMREAD_COLOR);
-	
+
 	// resize image
 	resizeImg(source, imgResized, 1024, true);
-	
+
 	// convert to gray scale
 	cvtColor(imgResized, gray, COLOR_BGR2GRAY);
 
@@ -1361,10 +1309,10 @@ void chessBoardDetection()
 
 	char TrackbarName[50];
 	sprintf(TrackbarName, "Treshhold x %d", 255);
-	
+
 	namedWindow("Parallel lines", 1);
 	createTrackbar(TrackbarName, "Parallel lines", &thresh, 255, onTrackBarTresh);
-	
+
 	onTrackBarTresh(thresh, 0);
 	//
 	waitKey();
@@ -1381,6 +1329,196 @@ void trainHog()
 	trainRookDescriptor();
 }
 
+void justAtest()
+{
+	char path[MAX_PATH];
+	openFileDlg(path);
+	Mat imgs = imread(path);
+
+	string ss = hog(imgs);
+	cout << ss;
+	waitKey();
+}
+
+void trainDescriptor(vector<vector<int>>& desc, string path, int count)
+{
+	int r, c;
+	for (int i = 1; i <= count; i++)
+	{
+		string filename = path + std::to_string(i) + ".jpg";
+		Mat gauss, dst, img2;
+		Mat img = imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
+		resize(img, img, Size(64, 128));
+		Rect r2(0, 32, 64, 96);
+		Mat img3 = img(r2).clone();
+		resize(img3, img2, Size(80, 160));
+
+		// resize(img, img2, Size(80, 160));
+		// imshow("hello", img2);
+		double k = 0.4;
+		int pH = 50;
+		int pL = (int)k * pH;
+		GaussianBlur(img2, gauss, Size(5, 5), 0.8, 0.8);
+		Canny(gauss, dst, pL, pH, 3);
+
+		vector<int> d(dst.rows, 0);
+
+		for (r = 0; r < dst.rows; r++)
+		{
+			for (c = 0; c < dst.cols; c++)
+			{
+				if (dst.at<uchar>(r, c) > 250)
+				{
+					d[r]++;
+				}
+			}
+		}
+
+		desc.push_back(d);
+		// imshow("Dst", dst);
+		// waitKey();
+	}
+}
+
+string classifiationMethod2(Mat img1)
+{
+	// string pathPawn = basePath + "pawn/";
+	vector<vector<int>> horizontalHistPawn;
+	vector<vector<int>> horizontalHistRook;
+	vector<vector<int>> horizontalHistKing;
+	vector<vector<int>> horizontalHistKnight;
+	vector<vector<int>> horizontalHistEmpty;
+	vector<vector<int>> horizontalHistBishop;
+	vector<vector<int>> horizontalHistQueen;
+
+	trainDescriptor(horizontalHistPawn, basePath + "pawn/", 16);
+	trainDescriptor(horizontalHistRook, basePath + "rook/", 16);
+	trainDescriptor(horizontalHistEmpty, basePath + "empty/", 16);
+	trainDescriptor(horizontalHistKing, basePath + "king/", 16);
+	trainDescriptor(horizontalHistBishop, basePath + "bishop/", 16);
+	trainDescriptor(horizontalHistKnight, basePath + "knight/", 16);
+	trainDescriptor(horizontalHistQueen, basePath + "queen/", 16);
+
+	Mat res1, res2, gauss1, gauss2, dst1, dst2;
+	// char path[MAX_PATH];
+	// openFileDlg(path);
+	// Mat img1 = imread(path, CV_LOAD_IMAGE_GRAYSCALE);
+	// Mat img2 = imread("C:/Users/josh/Desktop/Capture1.PNG", CV_LOAD_IMAGE_GRAYSCALE);
+	resize(img1, res1, Size(80, 160));
+	// resize(img2, res2, Size(80, 160));
+	double k = 0.4;
+	int pH = 50;
+	int pL = (int)k * pH;
+	GaussianBlur(res1, gauss1, Size(5, 5), 0.8, 0.8);
+	Canny(gauss1, dst1, pL, pH, 3);
+
+	// GaussianBlur(res2, gauss2, Size(5, 5), 0.8, 0.8);
+	// Canny(gauss2, dst2, pL, pH, 3);
+
+	vector<int> imgHorizontal(dst1.rows, 0);
+	// vector<int> img2Horizontal(dst1.rows, 0);
+
+	for (int r = 0; r < dst1.rows; r++)
+	{
+		for (int c = 0; c < dst1.cols; c++)
+		{
+			if (dst1.at<uchar>(r, c) > 250)
+			{
+				imgHorizontal[r]++;
+			}
+		}
+	}
+
+	int minValue = 100000000;
+	string piece;
+
+	int sum;
+	for (int i = 0; i < horizontalHistPawn.size(); i++)
+	{
+		sum = 0;
+		for (int c = 0; c < dst1.rows; c++)
+		{
+			sum += std::abs(imgHorizontal[c] - horizontalHistPawn[i][c]);
+		}
+		if (sum < minValue)
+		{
+			minValue = sum;
+			piece = "Pawn";
+		}
+	}
+
+	for (int i = 0; i < horizontalHistRook.size(); i++)
+	{
+		sum = 0;
+		for (int c = 0; c < dst1.rows; c++)
+		{
+			sum += std::abs(imgHorizontal[c] - horizontalHistRook[i][c]);
+		}
+		if (sum < minValue)
+		{
+			minValue = sum;
+			piece = "Rook";
+		}
+	}
+	for (int i = 0; i < horizontalHistRook.size(); i++)
+	{
+		sum = 0;
+		for (int c = 0; c < dst1.rows; c++)
+		{
+			sum += std::abs(imgHorizontal[c] - horizontalHistKing[i][c]);
+		}
+		if (sum < minValue)
+		{
+			minValue = sum;
+			piece = "King";
+		}
+	}
+
+	for (int i = 0; i < horizontalHistRook.size(); i++)
+	{
+		sum = 0;
+		for (int c = 0; c < dst1.rows; c++)
+		{
+			sum += std::abs(imgHorizontal[c] - horizontalHistBishop[i][c]);
+		}
+		if (sum < minValue)
+		{
+			minValue = sum;
+			piece = "Bishop";
+		}
+	}
+	for (int i = 0; i < horizontalHistRook.size(); i++)
+	{
+		sum = 0;
+		for (int c = 0; c < dst1.rows; c++)
+		{
+			sum += std::abs(imgHorizontal[c] - horizontalHistKnight[i][c]);
+		}
+		if (sum < minValue)
+		{
+			minValue = sum;
+			piece = "knight";
+		}
+	}
+	for (int i = 0; i < horizontalHistRook.size(); i++)
+	{
+		sum = 0;
+		for (int c = 0; c < dst1.rows; c++)
+		{
+			sum += std::abs(imgHorizontal[c] - horizontalHistEmpty[i][c]);
+		}
+		if (sum < minValue)
+		{
+			minValue = sum;
+			piece = "empty";
+		}
+	}
+
+	// imshow("Image", dst1);
+	return piece;
+	// waitKey();
+}
+
 vector<Point> points;
 
 void extractBoard(Mat img)
@@ -1391,71 +1529,218 @@ void extractBoard(Mat img)
 	Point tl, tr, bl, br;
 	perspectiveProjectionUtil.getBorderBoxes(points, tl, tr, bl, br);
 
-	Point2f sourcePoints[4] = { tl, tr, bl, br };
+	Point2f sourcePoints[4] = {tl, tr, bl, br};
 	Point2f destinationPoints1[4] = {
 		Point2f(0, 0), Point2f(sizeImg.height, 0), Point2f(0, sizeImg.width), Point2f(sizeImg.height, sizeImg.width)
 	};
 
-	Mat projectionMatrix1 = perspectiveProjectionUtil.getPerspectiveTransform(sourcePoints, destinationPoints1, OPEN_CV);
+	Mat projectionMatrix1 = perspectiveProjectionUtil.
+		getPerspectiveTransform(sourcePoints, destinationPoints1, OPEN_CV);
 	Mat imgProjected1 = perspectiveProjectionUtil.perspectiveProjection(projectionMatrix1, img, OPEN_CV, sizeImg);
 
 
 	vector<vector<Mat>> board;
-
+	vector<vector<string>> boardRes;
 	for (int i = 0; i < 8; i++)
 	{
 		vector<Mat> m;
+		vector<string> ss;
 		board.push_back(m);
+		boardRes.push_back(ss);
 	}
 
+	Mat invProjectionMatrix = projectionMatrix1.inv();
 	int s = 0;
 	char imageName[512];
 	// extragere piese de pe tabla de sah.
-	for (int y = 0; y < 7; y++) {
+	for (int y = 0; y < 7; y++)
+	{
 		for (int x = 0; x < 8; x++)
 		{
 			if (y == 0)
 			{
+				circle(imgProjected1, Point(x * 80, y * 80), 5, Scalar(0, 255, 0), 1);
 				Rect r1(x * 80, y * 80, 80, 80);
 				Mat img2 = imgProjected1(r1).clone();
 				board[0].push_back(img2);
 
 				Rect r2(x * 80, 0, 80, 160);
+				circle(imgProjected1, Point(x * 80, 0), 5, Scalar(0, 255, 0), 1);
 				Mat img3 = imgProjected1(r2).clone();
 				board[1].push_back(img3);
 			}
 			else
 			{
+				circle(imgProjected1, Point(x * 80, y * 80), 5, Scalar(0, 255, 0), 1);
 				Rect r1(x * 80, y * 80, 80, 160);
 				Mat img2 = imgProjected1(r1).clone();
 
 				board[y + 1].push_back(img2);
 			}
-
 		}
 	}
-
 
 
 	for (int i = 0; i < 8; i++)
 	{
 		for (int j = 0; j < 8; j++)
 		{
-			cout << i << " " << j << std::endl << std::endl;
-			hog(board[i][j]);
-			cout << std::endl;
-			cout << std::endl;
+			// cout << i << " " << j << std::endl << std::endl;
+			string res = hog(board[i][j]);
+			boardRes[i].push_back(res);
+			// cout << std::endl;
+			// cout << std::endl;
 		}
 	}
 
-	imshow("Board projected", imgProjected1);
+	// Mat mInv = perspectiveProjectionUtil.getPerspectiveTransform(destinationPoints1, sourcePoints, OPEN_CV);
+	//
+	// Point p(80, 80);
+	//
+	// float xp = (mInv.at<double>(0, 0) * p.x + mInv.at<double>(0, 1) * p.y + mInv.at<double>(0, 2)) / (mInv.at<
+	// 	double>(2, 0) * p.x + mInv.at<double>(2, 1) * p.y + 1);
+	// float yp = (mInv.at<double>(1, 0) * p.x + mInv.at<double>(1, 1) * p.y + mInv.at<double>(1, 2)) / (mInv.at<
+	// 	double>(2, 0) * p.x + mInv.at<double>(2, 1) * p.y + 1);
+	//
+	// Mat imgProjected2 = perspectiveProjectionUtil.perspectiveProjection(mInv, imgProjected1, OPEN_CV,
+	//                                                                     Size(img.cols, img.rows));
+	//
+	// imshow("por2", imgProjected2);
+
+	for (int i = 0; i < 8; i++)
+	{
+		for (int j = 0; j < 8; j++)
+		{
+			cout << boardRes[i][j] << " ";
+		}
+		cout << endl;
+	}
+
+	// circle(img, Point((int)xp, (int)yp), 5, Scalar(0, 255, 0), 1);
+
+	imshow("Img projected", imgProjected1);
+	imshow("new img", img);
 }
 
-void onMouseClick(int event, int x, int y, int flags, void *param)
+// int minP(int a, int b)
+// {
+// 	return (a < b) ? a : b;
+// }
+
+// int maxValue(int a, int b)
+// {
+// 	return (a > b) ? a : b;
+// }
+
+void extractChessBoard2(Mat img)
+{
+	Size sizeImg(640, 640);
+	PerspectiveProjection perspectiveProjectionUtil;
+
+	Point tl, tr, bl, br;
+	perspectiveProjectionUtil.getBorderBoxes(points, tl, tr, bl, br);
+
+	Point2f sourcePoints[4] = {tl, tr, bl, br};
+	Point2f destinationPoints1[4] = {
+		Point2f(0, 0), Point2f(sizeImg.height, 0), Point2f(0, sizeImg.width), Point2f(sizeImg.height, sizeImg.width)
+	};
+
+
+	Mat mInv = perspectiveProjectionUtil.getPerspectiveTransform(destinationPoints1, sourcePoints, OPEN_CV);
+
+	// matrix 9 x 9
+	vector<vector<Point>> chessBoardCorners;
+
+	for (int i = 0; i <= 9; i++)
+	{
+		vector<Point> row;
+		chessBoardCorners.push_back(row);
+	}
+
+	for (int c = 0; c <= sizeImg.width; c += 80)
+	{
+		for (int r = 0; r <= sizeImg.height; r += 80)
+		{
+			float xp = (mInv.at<double>(0, 0) * r + mInv.at<double>(0, 1) * c + mInv.at<double>(0, 2)) / (mInv.at<
+				double>(2, 0) * r + mInv.at<double>(2, 1) * c + 1);
+			float yp = (mInv.at<double>(1, 0) * r + mInv.at<double>(1, 1) * c + mInv.at<double>(1, 2)) / (mInv.at<
+				double>(2, 0) * r + mInv.at<double>(2, 1) * c + 1);
+
+			chessBoardCorners[c / 80].push_back(Point((int)xp, (int)yp));
+		}
+	}
+
+	for (int i = 0; i < 9; i++)
+	{
+		for (int j = 0; j < 9; j++)
+		{
+			circle(img, chessBoardCorners[i][j], 5, Scalar(0, 255, 0), 1);
+		}
+	}
+
+	imshow("ss", img);
+	waitKey();
+
+	int r = 1, c = 1;
+	vector<vector<Mat>> board;
+	for (int i = 0; i < 9; i++)
+	{
+		vector<Mat> ss;
+		board.push_back(ss);
+	}
+
+	for (r = 1; r < 9; r++)
+	{
+		for (c = 1; c < 9; c++)
+		{
+			Point tll = chessBoardCorners[r - 1][c - 1];
+			Point trr = chessBoardCorners[r - 1][c];
+			Point bll = chessBoardCorners[r][c - 1];
+			Point brr = chessBoardCorners[r][c];
+
+			Point lx = (tll.x < bll.x) ? tll : bll;
+			Point rx = (trr.x > brr.x) ? trr : brr;
+
+			Point ly = (bll.y > brr.y) ? bll : brr;
+
+			int width = rx.x - lx.x;
+			int height = bll.y - tll.y + 5;
+
+			for (int h = 140; h > height; h-=2)
+			{
+				if ((bll.y - h) >= 0)
+				{
+					height = h;
+					break;
+				}
+			}
+			Rect rr(lx.x, bll.y - height, width, height);
+			Mat i = img(rr).clone();
+
+			board[r-1].push_back(i);
+		}
+	}
+
+	for (int i = 0; i < 8; i++)
+	{
+		for (int j = 0; j < 8; j++)
+		{
+			imshow("ss",board[i][j]);
+			string res = hog(board[i][j]);
+			cout << res << " ";
+			waitKey();
+		}
+		cout << endl;
+	}
+
+	imshow("Img", img);
+}
+
+void onMouseClick(int event, int x, int y, int flags, void* param)
 {
 	if (event == CV_EVENT_LBUTTONDOWN && points.size() != 4)
 	{
-		Mat &img = *((Mat*)(param)); // 1st cast it back, then deref
+		Mat& img = *((Mat*)(param)); // 1st cast it back, then deref
 		circle(img, Point(x, y), 5, Scalar(0, 255, 0), 1);
 
 		points.push_back(Point(x, y));
@@ -1464,7 +1749,7 @@ void onMouseClick(int event, int x, int y, int flags, void *param)
 
 		if (points.size() == 4)
 		{
-			extractBoard(img);
+			extractChessBoard2(img);
 		}
 	}
 }
@@ -1485,6 +1770,158 @@ void chessBoardReconstruct()
 	waitKey();
 }
 
+
+void testClassification()
+{
+	// string pathPawn = basePath + "pawn/";
+	vector<vector<int>> horizontalHistPawn;
+	vector<vector<int>> horizontalHistRook;
+	vector<vector<int>> horizontalHistKing;
+	vector<vector<int>> horizontalHistKnight;
+	vector<vector<int>> horizontalHistEmpty;
+	vector<vector<int>> horizontalHistBishop;
+	vector<vector<int>> horizontalHistQueen;
+
+	trainDescriptor(horizontalHistPawn, basePath + "pawn/", 16);
+	trainDescriptor(horizontalHistRook, basePath + "rook/", 16);
+	trainDescriptor(horizontalHistEmpty, basePath + "empty/", 16);
+	trainDescriptor(horizontalHistKing, basePath + "king/", 16);
+	trainDescriptor(horizontalHistBishop, basePath + "bishop/", 16);
+	trainDescriptor(horizontalHistKnight, basePath + "knight/", 16);
+	trainDescriptor(horizontalHistQueen, basePath + "queen/", 16);
+
+	Mat res1, res2, gauss1, gauss2, dst1, dst2;
+	char path[MAX_PATH];
+	openFileDlg(path);
+	Mat img1 = imread(path, CV_LOAD_IMAGE_GRAYSCALE);
+	// Mat img2 = imread("C:/Users/josh/Desktop/Capture1.PNG", CV_LOAD_IMAGE_GRAYSCALE);
+	resize(img1, res1, Size(80, 160));
+	// resize(img2, res2, Size(80, 160));
+	double k = 0.4;
+	int pH = 50;
+	int pL = (int)k * pH;
+	GaussianBlur(res1, gauss1, Size(5, 5), 0.8, 0.8);
+	Canny(gauss1, dst1, pL, pH, 3);
+
+	// GaussianBlur(res2, gauss2, Size(5, 5), 0.8, 0.8);
+	// Canny(gauss2, dst2, pL, pH, 3);
+
+	vector<int> imgHorizontal(dst1.rows, 0);
+	// vector<int> img2Horizontal(dst1.rows, 0);
+
+	for (int r = 0; r < dst1.rows; r++)
+	{
+		for (int c = 0; c < dst1.cols; c++)
+		{
+			if (dst1.at<uchar>(r, c) > 250)
+			{
+				imgHorizontal[r]++;
+			}
+		}
+	}
+
+	int minValue = 100000000;
+	string piece;
+
+	int sum;
+	for (int i = 0; i < horizontalHistPawn.size(); i++)
+	{
+		sum = 0;
+		for (int c = 0; c < dst1.rows; c++)
+		{
+			sum += std::abs(imgHorizontal[c] - horizontalHistPawn[i][c]);
+		}
+		if (sum < minValue)
+		{
+			minValue = sum;
+			piece = "Pawn";
+		}
+	}
+
+	for (int i = 0; i < horizontalHistRook.size(); i++)
+	{
+		sum = 0;
+		for (int c = 0; c < dst1.rows; c++)
+		{
+			sum += std::abs(imgHorizontal[c] - horizontalHistRook[i][c]);
+		}
+		if (sum < minValue)
+		{
+			minValue = sum;
+			piece = "Rook";
+		}
+	}
+	for (int i = 0; i < horizontalHistRook.size(); i++)
+	{
+		sum = 0;
+		for (int c = 0; c < dst1.rows; c++)
+		{
+			sum += std::abs(imgHorizontal[c] - horizontalHistKing[i][c]);
+		}
+		if (sum < minValue)
+		{
+			minValue = sum;
+			piece = "King";
+		}
+	}
+
+	for (int i = 0; i < horizontalHistRook.size(); i++)
+	{
+		sum = 0;
+		for (int c = 0; c < dst1.rows; c++)
+		{
+			sum += std::abs(imgHorizontal[c] - horizontalHistBishop[i][c]);
+		}
+		if (sum < minValue)
+		{
+			minValue = sum;
+			piece = "Bishop";
+		}
+	}
+	for (int i = 0; i < horizontalHistRook.size(); i++)
+	{
+		sum = 0;
+		for (int c = 0; c < dst1.rows; c++)
+		{
+			sum += std::abs(imgHorizontal[c] - horizontalHistKnight[i][c]);
+		}
+		if (sum < minValue)
+		{
+			minValue = sum;
+			piece = "knight";
+		}
+	}
+	for (int i = 0; i < horizontalHistRook.size(); i++)
+	{
+		sum = 0;
+		for (int c = 0; c < dst1.rows; c++)
+		{
+			sum += std::abs(imgHorizontal[c] - horizontalHistEmpty[i][c]);
+		}
+		if (sum < minValue)
+		{
+			minValue = sum;
+			piece = "empty";
+		}
+	}
+
+	imshow("Image", dst1);
+	cout << piece;
+	waitKey();
+}
+
+
+void testHog()
+{
+	char path[MAX_PATH];
+	openFileDlg(path);
+	Mat img1 = imread(path);
+
+	string res = hog(img1);
+	imshow("Img", img1);
+	cout << res << " ";
+	waitKey();
+}
 
 int main()
 {
@@ -1513,6 +1950,9 @@ int main()
 		printf(" 15 - Test Hough Transformation\n");
 		printf(" 16 - Chessboard reconstruction\n");
 		printf(" 17 - Train hog\n");
+		printf(" 17 - Train hog\n");
+		printf(" 19 - Classification 2\n");
+		printf(" 20 - Classification 1\n");
 		printf(" 0 - Exit\n\n");
 		printf("Option: ");
 		scanf("%d", &op);
@@ -1573,6 +2013,18 @@ int main()
 		case 17:
 			// hog();
 			trainHog();
+			break;
+		case 18:
+			// hog();
+			justAtest();
+			break;
+		case 19:
+			// hog();
+			testClassification();
+			break;
+		case 20:
+			// hog();
+			testHog();
 			break;
 		}
 	}
