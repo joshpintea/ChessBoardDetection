@@ -700,11 +700,12 @@ void trainBishopDescriptor()
 		vector<float> descriptor3;
 		vector<float> descriptor4;
 		vector<float> descriptor5;
-		HOGDescriptor h(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+		HOGDescriptor h(Size(64, 80), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+		/*
 		h.compute(img1, descriptor1);
 		bishopDescriptors.push_back(descriptor1);
 
-		/*
+		
 		Rect r1(0, 16, 64, 112);
 		Mat img2 = img1(r1).clone();
 		resize(img2, img2, Size(64, 128));
@@ -716,13 +717,13 @@ void trainBishopDescriptor()
 		resize(img3, img3, Size(64, 128));
 		h.compute(img3, descriptor3);
 		bishopDescriptors.push_back(descriptor3);
-		
+		*/
 		Rect r3(0, 48, 64, 80);
 		Mat img4 = img1(r3).clone();
-		resize(img4, img4, Size(64, 128));
+		//resize(img4, img4, Size(64, 128));
 		h.compute(img4, descriptor4);
 		bishopDescriptors.push_back(descriptor4);
-
+		/*
 		Rect r4(0, 64, 64, 64);
 		Mat img5 = img1(r4).clone();
 		resize(img5, img5, Size(64, 128));
@@ -746,11 +747,12 @@ void trainKingDescriptor()
 		vector<float> descriptor3;
 		vector<float> descriptor4;
 		vector<float> descriptor5;
-		HOGDescriptor h(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+		HOGDescriptor h(Size(64, 80), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+		/*
 		h.compute(img1, descriptor1);
 		kingDescriptors.push_back(descriptor1);
 
-		/*
+		
 		Rect r1(0, 16, 64, 112);
 		Mat img2 = img1(r1).clone();
 		resize(img2, img2, Size(64, 128));
@@ -762,13 +764,13 @@ void trainKingDescriptor()
 		resize(img3, img3, Size(64, 128));
 		h.compute(img3, descriptor3);
 		kingDescriptors.push_back(descriptor3);
-
+		*/
 		Rect r3(0, 48, 64, 80);
 		Mat img4 = img1(r3).clone();
-		resize(img4, img4, Size(64, 128));
+		//resize(img4, img4, Size(64, 128));
 		h.compute(img4, descriptor4);
 		kingDescriptors.push_back(descriptor4);
-
+		/*
 		Rect r4(0, 64, 64, 64);
 		Mat img5 = img1(r4).clone();
 		resize(img5, img5, Size(64, 128));
@@ -792,12 +794,12 @@ void trainPawnDescriptor()
 		vector<float> descriptor3;
 		vector<float> descriptor4;
 		vector<float> descriptor5;
-		HOGDescriptor h(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
-
+		HOGDescriptor h(Size(64, 80), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+		/*
 		h.compute(img1, descriptor1);
 		pawnDescriptors.push_back(descriptor1);
 
-		/*
+		
 		Rect r1(0, 16, 64, 112);
 		Mat img2 = img1(r1).clone();
 		resize(img2, img2, Size(64, 128));
@@ -809,13 +811,13 @@ void trainPawnDescriptor()
 		resize(img3, img3, Size(64, 128));
 		h.compute(img3, descriptor3);
 		pawnDescriptors.push_back(descriptor3);
-		
+		*/
 		Rect r3(0, 48, 64, 80);
 		Mat img4 = img1(r3).clone();
-		resize(img4, img4, Size(64, 128));
+		//resize(img4, img4, Size(64, 128));
 		h.compute(img4, descriptor4);
 		pawnDescriptors.push_back(descriptor4);
-		
+		/*
 		Rect r4(0, 64, 64, 64);
 		Mat img5 = img1(r4).clone();
 		resize(img5, img5, Size(64, 128));
@@ -839,11 +841,12 @@ void trainEmptyDescriptor()
 		vector<float> descriptor3;
 		vector<float> descriptor4;
 		vector<float> descriptor5;
-		HOGDescriptor h(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+		HOGDescriptor h(Size(64, 80), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+		/*
 		h.compute(img1, descriptor1);
 		emptyDescriptors.push_back(descriptor1);
 
-		/*
+		
 		Rect r1(0, 16, 64, 112);
 		Mat img2 = img1(r1).clone();
 		resize(img2, img2, Size(64, 128));
@@ -855,13 +858,13 @@ void trainEmptyDescriptor()
 		resize(img3, img3, Size(64, 128));
 		h.compute(img3, descriptor3);
 		emptyDescriptors.push_back(descriptor3);
-
+		*/
 		Rect r3(0, 48, 64, 80);
 		Mat img4 = img1(r3).clone();
-		resize(img4, img4, Size(64, 128));
+		//resize(img4, img4, Size(64, 128));
 		h.compute(img4, descriptor4);
 		emptyDescriptors.push_back(descriptor4);
-
+		/*
 		Rect r4(0, 64, 64, 64);
 		Mat img5 = img1(r4).clone();
 		resize(img5, img5, Size(64, 128));
@@ -885,11 +888,12 @@ void trainKnightDescriptor()
 		vector<float> descriptor3;
 		vector<float> descriptor4;
 		vector<float> descriptor5;
-		HOGDescriptor h(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+		HOGDescriptor h(Size(64, 80), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+		/*
 		h.compute(img1, descriptor1);
 		knightDescriptors.push_back(descriptor1);
 
-		/*
+		
 		Rect r1(0, 16, 64, 112);
 		Mat img2 = img1(r1).clone();
 		resize(img2, img2, Size(64, 128));
@@ -901,13 +905,13 @@ void trainKnightDescriptor()
 		resize(img3, img3, Size(64, 128));
 		h.compute(img3, descriptor3);
 		knightDescriptors.push_back(descriptor3);
-		
+		*/
 		Rect r3(0, 48, 64, 80);
 		Mat img4 = img1(r3).clone();
-		resize(img4, img4, Size(64, 128));
+		//resize(img4, img4, Size(64, 128));
 		h.compute(img4, descriptor4);
 		knightDescriptors.push_back(descriptor4);
-
+		/*
 		Rect r4(0, 64, 64, 64);
 		Mat img5 = img1(r4).clone();
 		resize(img5, img5, Size(64, 128));
@@ -931,11 +935,12 @@ void trainQueenDescriptor()
 		vector<float> descriptor3;
 		vector<float> descriptor4;
 		vector<float> descriptor5;
-		HOGDescriptor h(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+		HOGDescriptor h(Size(64, 80), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+		/*
 		h.compute(img1, descriptor1);
 		queenDescriptors.push_back(descriptor1);
 
-		/*
+		
 		Rect r1(0, 16, 64, 112);
 		Mat img2 = img1(r1).clone();
 		resize(img2, img2, Size(64, 128));
@@ -947,13 +952,13 @@ void trainQueenDescriptor()
 		resize(img3, img3, Size(64, 128));
 		h.compute(img3, descriptor3);
 		queenDescriptors.push_back(descriptor3);
-
+		*/
 		Rect r3(0, 48, 64, 80);
 		Mat img4 = img1(r3).clone();
-		resize(img4, img4, Size(64, 128));
+		//resize(img4, img4, Size(64, 128));
 		h.compute(img4, descriptor4);
 		queenDescriptors.push_back(descriptor4);
-
+		/*
 		Rect r4(0, 64, 64, 64);
 		Mat img5 = img1(r4).clone();
 		resize(img5, img5, Size(64, 128));
@@ -977,12 +982,12 @@ void trainRookDescriptor()
 		vector<float> descriptor3;
 		vector<float> descriptor4;
 		vector<float> descriptor5;
-		HOGDescriptor h(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
-
+		HOGDescriptor h(Size(64, 80), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+		/*
 		h.compute(img1, descriptor1);
 		rookDescriptors.push_back(descriptor1);
 
-		/*
+		
 		Rect r1(0, 16, 64, 112);
 		Mat img2 = img1(r1).clone();
 		resize(img2, img2, Size(64, 128));
@@ -994,13 +999,13 @@ void trainRookDescriptor()
 		resize(img3, img3, Size(64, 128));
 		h.compute(img3, descriptor3);
 		rookDescriptors.push_back(descriptor3);
-		
+		*/
 		Rect r3(0, 48, 64, 80);
 		Mat img4 = img1(r3).clone();
-		resize(img4, img4, Size(64, 128));
+		//resize(img4, img4, Size(64, 128));
 		h.compute(img4, descriptor4);
 		rookDescriptors.push_back(descriptor4);
-		
+		/*
 		Rect r4(0, 64, 64, 64);
 		Mat img5 = img1(r4).clone();
 		resize(img5, img5, Size(64, 128));
@@ -1038,43 +1043,48 @@ string hog(Mat sourceImg)
 	resize(sourceImg, img, Size(64, 128));
 	imshow("img", img);
 	vector<float> descriptor;
+	vector<float> descriptor2;
+	Rect r3(0, 48, 64, 80);
+	Mat img2 = img(r3).clone();
 	HOGDescriptor h(Size(64, 128), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
+	HOGDescriptor h2(Size(64, 80), Size(16, 16), Size(8, 8), Size(8, 8), 9, 0, -1, 0, 0.2, 0);
 	h.compute(img, descriptor);
+	h2.compute(img2, descriptor2);
 
 	float b = 0;
 	for (int i = 0; i < bishopDescriptors.size(); i++)
 	{
-		b += vectors_distance(descriptor, bishopDescriptors[i]);
+		b += vectors_distance(descriptor2, bishopDescriptors[i]);
 	}
 	float k = 0;
 	for (int i = 0; i < kingDescriptors.size(); i++)
 	{
-		k += vectors_distance(descriptor, kingDescriptors[i]);
+		k += vectors_distance(descriptor2, kingDescriptors[i]);
 	}
 	float p = 0;
 	for (int i = 0; i < pawnDescriptors.size(); i++)
 	{
-		p += vectors_distance(descriptor, pawnDescriptors[i]);
+		p += vectors_distance(descriptor2, pawnDescriptors[i]);
 	}
 	float e = 0;
 	for (int i = 0; i < emptyDescriptors.size(); i++)
 	{
-		e += vectors_distance(descriptor, emptyDescriptors[i]);
+		e += vectors_distance(descriptor2, emptyDescriptors[i]);
 	}
 	float kn = 0;
 	for (int i = 0; i < knightDescriptors.size(); i++)
 	{
-		kn += vectors_distance(descriptor, knightDescriptors[i]);
+		kn += vectors_distance(descriptor2, knightDescriptors[i]);
 	}
 	float q = 0;
 	for (int i = 0; i < queenDescriptors.size(); i++)
 	{
-		q += vectors_distance(descriptor, queenDescriptors[i]);
+		q += vectors_distance(descriptor2, queenDescriptors[i]);
 	}
 	float r = 0;
 	for (int i = 0; i < rookDescriptors.size(); i++)
 	{
-		r += vectors_distance(descriptor, rookDescriptors[i]);
+		r += vectors_distance(descriptor2, rookDescriptors[i]);
 	}
 	string res = decide(b / bishopDescriptors.size(), p / pawnDescriptors.size(), kn / knightDescriptors.size(),
 	                    k / kingDescriptors.size(), q / queenDescriptors.size(), e / emptyDescriptors.size(),
@@ -1089,6 +1099,7 @@ string hog(Mat sourceImg)
 		cout << "queen: " << q / queenDescriptors.size() << "\n";
 		cout << "rook: " << r / rookDescriptors.size() << "\n";
 		cout << res;
+		//cout << "\n";
 	}
 
 	return res;
@@ -1670,6 +1681,7 @@ void extractChessBoard2(Mat img)
 		}
 	}
 
+
 	/*
 	for (int i = 0; i < 9; i++)
 	{
@@ -1682,6 +1694,17 @@ void extractChessBoard2(Mat img)
 	imshow("ss", img);
 	waitKey();
 	*/
+
+	// for (int i = 0; i < 9; i++)
+	// {
+	// 	for (int j = 0; j < 9; j++)
+	// 	{
+	// 		circle(img, chessBoardCorners[i][j], 5, Scalar(0, 255, 0), 1);
+	// 	}
+	// }
+
+	// imshow("ss", img);
+	// waitKey();
 
 	int r = 1, c = 1;
 	vector<vector<Mat>> board;
@@ -1700,15 +1723,12 @@ void extractChessBoard2(Mat img)
 			Point bll = chessBoardCorners[r][c - 1];
 			Point brr = chessBoardCorners[r][c];
 
-			Point lx = (tll.x < bll.x) ? bll : tll;
-			Point rx = (trr.x > brr.x) ? trr : brr;
 
-			Point ly = (bll.y > brr.y) ? bll : brr;
+			int width = brr.x - bll.x;
 
-			int width = rx.x - lx.x;
 			int height = bll.y - tll.y + 5;
 
-			for (int h = 140; h > height; h-=2)
+			for (int h = width*2; h > height; h-=20)
 			{
 				if ((bll.y - h) >= 0)
 				{
@@ -1716,7 +1736,7 @@ void extractChessBoard2(Mat img)
 					break;
 				}
 			}
-			Rect rr(lx.x, bll.y - height, width, height);
+			Rect rr(bll.x, bll.y - height, width, height);
 			Mat i = img(rr).clone();
 
 			board[r-1].push_back(i);
@@ -1727,7 +1747,8 @@ void extractChessBoard2(Mat img)
 	{
 		for (int j = 0; j < 8; j++)
 		{
-			imshow("ss",board[i][j]);
+			//imshow("ss",board[i][j]);
+			//cout << i << " " << j << "\n";
 			string res = hog(board[i][j]);
 			cout << res << " ";
 			imwrite("C:/Users/Bobossuno/Desktop/PI/ChessBoardDetection/Images/training_images/projres/" + to_string(i) + to_string(j) + ".jpg", board[i][j]);
