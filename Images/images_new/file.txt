@@ -1,0 +1,8 @@
+(0 empty 0)  (1 empty 1)  (0 empty 0)  (1 empty 1)  (0 empty 0)  (1 empty 1)  (0 empty 0)  (1 empty 1)  
+(1 empty 1)  (0 None 0)  (1 None 1)  (0 None 0)  (1 None 1)  (0 None 0)  (1 empty 1)  (0 empty 0)  
+(0 empty 0)  (1 None 1)  (0 None 0)  (1 None 0)  (0 None 0)  (1 None 0)  (0 None 0)  (1 None 1)  
+(1 empty 1)  (0 None 0)  (1 None 1)  (0 empty 0)  (1 None 1)  (0 None 1)  (1 None 1)  (0 None 0)  
+(0 None 0)  (1 empty 1)  (0 empty 0)  (1 empty 0)  (0 None 0)  (1 None 1)  (0 None 0)  (1 empty 1)  
+(1 empty 1)  (0 empty 0)  (1 None 1)  (0 None 0)  (1 empty 1)  (0 None 0)  (1 None 1)  (0 empty 0)  
+(0 None 0)  (1 empty 1)  (0 empty 0)  (1 None 1)  (0 None 0)  (1 empty 1)  (0 empty 0)  (1 empty 1)  
+(1 empty 1)  (0 None 0)  (1 empty 1)  (0 empty 0)  (1 empty 1)  (0 empty 0)  (1 empty 1)  (0 empty 0)  

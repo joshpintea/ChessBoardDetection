@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <cmath>
 #include <numeric>
+#include "ChessBoard.h"
 
 using namespace std;
 
@@ -1550,8 +1551,6 @@ void extractBoard(Mat img)
 	}
 
 	Mat invProjectionMatrix = projectionMatrix1.inv();
-	int s = 0;
-	char imageName[512];
 	// extragere piese de pe tabla de sah.
 	for (int y = 0; y < 7; y++)
 	{
@@ -1622,16 +1621,6 @@ void extractBoard(Mat img)
 	imshow("new img", img);
 }
 
-// int minP(int a, int b)
-// {
-// 	return (a < b) ? a : b;
-// }
-
-// int maxValue(int a, int b)
-// {
-// 	return (a > b) ? a : b;
-// }
-
 void extractChessBoard2(Mat img)
 {
 	Size sizeImg(640, 640);
@@ -1669,17 +1658,6 @@ void extractChessBoard2(Mat img)
 			chessBoardCorners[c / 80].push_back(Point((int)xp, (int)yp));
 		}
 	}
-
-	// for (int i = 0; i < 9; i++)
-	// {
-	// 	for (int j = 0; j < 9; j++)
-	// 	{
-	// 		circle(img, chessBoardCorners[i][j], 5, Scalar(0, 255, 0), 1);
-	// 	}
-	// }
-
-	// imshow("ss", img);
-	// waitKey();
 
 	int r = 1, c = 1;
 	vector<vector<Mat>> board;
@@ -1721,7 +1699,7 @@ void extractChessBoard2(Mat img)
 		for (int j = 0; j < 8; j++)
 		{
 			imshow("ss",board[i][j]);
-			string res = hog(board[i][j]);
+			string res = classifiationMethod2(board[i][j]);
 			cout << res << " ";
 			waitKey();
 		}
@@ -1731,12 +1709,74 @@ void extractChessBoard2(Mat img)
 	imshow("Img", img);
 }
 
+void reconstructTest(Mat img)
+{
+	ChessBoard chessBoardUtil;
+	chessBoardUtil.train();
+	chessBoardUtil.setPoints(points);
+	chessBoardUtil.reconstructChessBoard(img, METHOD1, HORIZONTAL);
+}
+
+
+void crop(Mat img)
+{
+	Point tl, tr, bl, br;
+	PerspectiveProjection perspective_projection;
+	perspective_projection.getBorderBoxes(points, tl, tr, bl, br);
+
+	string path = "D:/MyWorkSpace/Image Processing/ChessBoardDetection/ChessBoardDetection/Images/Pieces/";
+	string dark = path + "dark_background/";
+	string white = path + "white_background/";
+
+	string piece;
+	int color = 0;
+	cout << "Color:";
+	cin >> color;
+	cout << "Piece";
+	cin >> piece;
+
+	
+	int width = tr.x - tl.x;
+	int height = bl.y - tl.y;
+	Rect r = Rect(tl.x, tl.y, width, height);
+	Mat i = img(r).clone(); // background white
+	imshow("source", i);
+	Mat s = i.clone();
+	for (int rr = 0; rr < s.rows; rr++)
+	{
+		for (int cc = 0; cc < s.cols; cc++)
+		{
+			Vec3b col = i.at<Vec3b>(rr, cc);
+			i.at<Vec3b>(rr, cc) = Vec3b(255 - col[0], 255 - col[1], 255 - col[2]);
+		}
+	}
+
+	string fileName1 = piece + "_" + ((color == 1) ? "white.png" : "dark.png");
+	string fileName2 = piece + "_" + ((color == 1) ? "dark.png" : "white.png");
+
+	string ss = white + fileName1;
+	string ss2 = dark + fileName1;
+	cout << ss << endl;
+	cout << ss2 << endl;
+	// std::cout << fileName1 << " " << white + piece << " " << dark + piece;
+	// waitKey();
+	// std::cout << fileName1 << " " << white + piece;
+	vector<int> compression_params;
+	compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
+	compression_params.push_back(9);
+
+	imwrite(white + fileName1, s, compression_params);
+	imwrite(dark + fileName2, i, compression_params);
+	imshow("ssa", i);
+	waitKey();
+}
+
 void onMouseClick(int event, int x, int y, int flags, void* param)
 {
 	if (event == CV_EVENT_LBUTTONDOWN && points.size() != 4)
 	{
 		Mat& img = *((Mat*)(param)); // 1st cast it back, then deref
-		circle(img, Point(x, y), 5, Scalar(0, 255, 0), 1);
+		circle(img, Point(x, y), 2, Scalar(0, 255, 0), 1);
 
 		points.push_back(Point(x, y));
 
@@ -1744,7 +1784,9 @@ void onMouseClick(int event, int x, int y, int flags, void* param)
 
 		if (points.size() == 4)
 		{
-			extractChessBoard2(img);
+			// extractChessBoard2(img);
+			reconstructTest(img);
+			// crop(img);
 		}
 	}
 }
