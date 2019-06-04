@@ -21,8 +21,8 @@ enum CLASSIFICATION
 class ChessBoard
 {
 private:
-	string basePath = "C:/Users/Bobossuno/Desktop/PICLONE99/ChessBoardDetection/Images/training_images/";
-	string piecesPath = "C:/Users/Bobossuno/Desktop/PICLONE99/ChessBoardDetection/Images/pieces/";
+	string basePath = "D:/MyWorkSpace/Image Processing/ChessBoardDetection/ChessBoardDetection/Images/training_images/";
+	string piecesPath = "D:/MyWorkSpace/Image Processing/ChessBoardDetection/ChessBoardDetection/Images/pieces/";
 	string darkDir = piecesPath + "dark_background/";
 	string whiteDir = piecesPath + "white_background/";
 

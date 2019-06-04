@@ -129,7 +129,7 @@ void ChessBoard::colorClassification(Mat img)
 	for (int i =0 ; i < 8; i++)
 	{
 		vector<Piece> row;
-		for (int i = 0; i < 8; i++)
+		for (int j = 0; j < 8; j++)
 		{
 			Piece p;
 			row.push_back(p);
@@ -151,11 +151,29 @@ void ChessBoard::colorClassification(Mat img)
 			int positive = 0;
 			int widthNegative = 0;
 			int widthPositive = 0;
+
+			int white = 0;
+			int black = 0;
 			for (int rr = c * 80 + 1; rr < (c+1)*80; rr++)
 			{
 				for (int cc = r * 80 + 1; cc < (r+1)*80; cc++)
 				{
 					hist[imgProjectedGray.at<uchar>(rr, cc)]++;
+				}
+			}
+
+			
+			for (int rr = c * 80 + 20; rr <= c * 80 + 60; rr++)
+			{
+				for (int cc = r * 80 + 20; cc <= r * 80 + 60; cc++)
+				{
+					if (imgProjectedGray.at<uchar>(rr, cc) < 128)
+					{
+						black++;
+					} else
+					{
+						white++;
+					}
 				}
 			}
 
@@ -174,16 +192,18 @@ void ChessBoard::colorClassification(Mat img)
 				}
 			}
 
-			chessBoardPieces[r][c].positive = positive;
-			chessBoardPieces[r][c].negative = negative;
-			chessBoardPieces[r][c].widthPositive = widthPositive;
-			chessBoardPieces[r][c].widthNegative = widthNegative;
+			chessBoardPieces[c][r].positive = positive;
+			chessBoardPieces[c][r].negative = negative;
+			chessBoardPieces[c][r].widthPositive = widthPositive;
+			chessBoardPieces[c][r].widthNegative = widthNegative;
+			chessBoardPieces[c][r].color = (white > black) ? 1 : 0;
 		}
 	}
 	int even = -1;
-	for (c = 0; c < 8; c++)
+	bool loopAgain = false;
+	for (r = 0; r < 8; r++)
 	{
-		for (r = 0; r < 8; r++)
+		for (c = 0; c < 8; c++)
 		{
 			Piece p = chessBoardPieces[r][c];
 			if (even != -1)
@@ -191,7 +211,7 @@ void ChessBoard::colorClassification(Mat img)
 				chessBoardPieces[r][c].backgroundColor = ((r + c) % 2 == 0) ? even : (1 - even);
 			}
 
-			if (p.negative > 4000 && p.positive < 500 && p.widthNegative < 20 && p.widthPositive < 3 )
+			if (p.negative > 4500 && p.positive < 500 && p.widthNegative < 20 && p.widthPositive < 3 )
 			{
 				chessBoardPieces[r][c].type = "empty";
 				chessBoardPieces[r][c].backgroundColor = 0;
@@ -201,7 +221,7 @@ void ChessBoard::colorClassification(Mat img)
 				}
 			}
 
-			if (p.positive > 4000 && p.negative < 500 && p.widthPositive < 20 && p.widthNegative < 3)
+			if (p.positive > 4500 && p.negative < 500 && p.widthPositive < 20 && p.widthNegative < 3)
 			{
 				chessBoardPieces[r][c].type = "empty";
 				chessBoardPieces[r][c].backgroundColor = 1;
@@ -211,43 +231,9 @@ void ChessBoard::colorClassification(Mat img)
 				}
 			}
 
-			if (even == -1)
+			if (chessBoardPieces[r][c].backgroundColor == -1)
 			{
-				queue.push(Point(r, c));
-			} else
-			{
-				Rect rr(r * 80 + 20, c * 80 + 20, 40, 40);
-				Mat p = this->imgProjectedGray(rr).clone();
-
-				int white = 0;
-				int black = 0;
-				for (int i = 0; i < p.rows; i++)
-				{
-					for (int j = 0 ; j < p.cols; j++)
-					{
-						if (p.at<uchar>(i,j) < 128)
-						{
-							black++;
-						} else if (p.at<uchar>(i,j) > 128)
-						{
-							white++;
-						}
-					}
-
-				}
-				Rect rrr(r * 80, c * 80, 80, 80);
-				Mat pp = this->imgProjectedGray(rrr).clone();
-				imshow("p", p);
-				imshow("src", pp);
-				cout << black << "  " << white << "\n";
-				waitKey();
-				if (white > black)
-				{
-					this->chessBoardPieces[r][c].color = 1;
-				} else // black > white ; back = 1 => color = 0 else color 1
-				{
-					this->chessBoardPieces[r][c].color = 0;
-				}
+				loopAgain = true;
 			}
 		}
 	}
@@ -255,7 +241,15 @@ void ChessBoard::colorClassification(Mat img)
 	{
 		even = rand() % 2; // 1 in a million :))
 	}
-
+	if (loopAgain) {
+		for (r = 0; r < 8; r++)
+		{
+			for (c = 0; c < 8; c++)
+			{
+				this->chessBoardPieces[r][c].backgroundColor = ((r + c) % 2 == 0) ? even : (1 - even);
+			}
+		}
+	}
 }
 
 
@@ -409,15 +403,7 @@ void ChessBoard::reconstructChessBoardMethod1(Mat img, CLASSIFICATION cls)
 		}
 		//cout << endl;
 	}
-	
-	for (int r = 0; r < 8 ; r++)
-	{
-		for (int c = 0; c < 8; c++)
-		{
-			cout << this->chessBoardPieces[r][c].toString() << " ";
-		}
-		cout << endl;
-	}
+
 }
 
 void ChessBoard::reconstructChessBoardMethod2(Mat img, CLASSIFICATION cls)

@@ -685,7 +685,7 @@ vector<vector<float>> knightDescriptors;
 vector<vector<float>> queenDescriptors;
 vector<vector<float>> rookDescriptors;
 
-string basePath = "C:/Users/Bobossuno/Desktop/PICLONE99/ChessBoardDetection/Images/training_images/";
+string basePath = "D:/MyWorkSpace/Image Processing/ChessBoardDetection/ChessBoardDetection/Images/training_images/";
 
 void trainBishopDescriptor()
 {
@@ -1714,7 +1714,7 @@ void reconstructTest(Mat img)
 	ChessBoard chessBoardUtil;
 	chessBoardUtil.train();
 	chessBoardUtil.setPoints(points);
-	chessBoardUtil.reconstructChessBoard(img, METHOD1, HORIZONTAL);
+	chessBoardUtil.reconstructChessBoard(img, METHOD1, HOG);
 	//chessBoardUtil.reconstructChessBoard(img, METHOD1, HORIZONTAL);
 	//chessBoardUtil.reconstructChessBoard(img, METHOD2, HORIZONTAL);
 	//chessBoardUtil.reconstructChessBoard(img, METHOD2, HOG);
