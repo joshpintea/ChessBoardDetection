@@ -88,9 +88,9 @@ void showHistogram2(const std::string& name, int* hist, const int hist_cols, con
 void ChessBoard::train()
 {
 	// train horizontal classification method
-	trainDescriptorHorizontal(this->horizontalHistPawn, basePath + "pawn/", 32);
+	trainDescriptorHorizontal(this->horizontalHistPawn, basePath + "pawn/", 140);
 	trainDescriptorHorizontal(this->horizontalHistRook, basePath + "rook/", 32);
-	trainDescriptorHorizontal(this->horizontalHistEmpty, basePath + "empty/", 32);
+	trainDescriptorHorizontal(this->horizontalHistEmpty, basePath + "empty/", 63);
 	trainDescriptorHorizontal(this->horizontalHistKing, basePath + "king/", 16);
 	trainDescriptorHorizontal(this->horizontalHistBishop, basePath + "bishop/", 32);
 	trainDescriptorHorizontal(this->horizontalHistKnight, basePath + "knight/", 32);
@@ -139,9 +139,9 @@ void ChessBoard::colorClassification(Mat img)
 
 	queue<Point> queue;
 
-	for (r = 0; r < 8; r++)
+	for (c = 0; c < 8; c++)
 	{
-		for (c = 0; c < 8; c++)
+		for (r = 0; r < 8; r++)
 		{
 			Rect rr(r * 80, c * 80, 80, 80);
 			Mat p = this->imgProjectedGray(rr).clone();
@@ -151,9 +151,9 @@ void ChessBoard::colorClassification(Mat img)
 			int positive = 0;
 			int widthNegative = 0;
 			int widthPositive = 0;
-			for (int rr = r * 80 + 1; rr < (r+1)*80; rr++)
+			for (int rr = c * 80 + 1; rr < (c+1)*80; rr++)
 			{
-				for (int cc = c * 80 + 1; cc < (c+1)*80; cc++)
+				for (int cc = r * 80 + 1; cc < (r+1)*80; cc++)
 				{
 					hist[imgProjectedGray.at<uchar>(rr, cc)]++;
 				}
@@ -181,9 +181,9 @@ void ChessBoard::colorClassification(Mat img)
 		}
 	}
 	int even = -1;
-	for (r = 0; r < 8; r++)
+	for (c = 0; c < 8; c++)
 	{
-		for (c = 0; c < 8; c++)
+		for (r = 0; r < 8; r++)
 		{
 			Piece p = chessBoardPieces[r][c];
 			if (even != -1)
@@ -225,15 +225,22 @@ void ChessBoard::colorClassification(Mat img)
 				{
 					for (int j = 0 ; j < p.cols; j++)
 					{
-						if (p.at<uchar>(i,j) < 70)
+						if (p.at<uchar>(i,j) < 128)
 						{
 							black++;
-						} else if (p.at<uchar>(i,j) > 185)
+						} else if (p.at<uchar>(i,j) > 128)
 						{
 							white++;
 						}
 					}
+
 				}
+				Rect rrr(r * 80, c * 80, 80, 80);
+				Mat pp = this->imgProjectedGray(rrr).clone();
+				imshow("p", p);
+				imshow("src", pp);
+				cout << black << "  " << white << "\n";
+				waitKey();
 				if (white > black)
 				{
 					this->chessBoardPieces[r][c].color = 1;
@@ -506,12 +513,14 @@ float ChessBoard::vectors_distance(vector<float> a, vector<float> b)
 	return sqrt(sum);
 }
 
-
+int len = 35;
 string ChessBoard::classificationHog(Mat sourceImg)
 {
 	Mat img;
 	resize(sourceImg, img, Size(64, 128));
-	imshow("img", img);
+
+	//imwrite(this->basePath + "/projres/" + to_string(len) + ".jpg", sourceImg);
+	//len++;
 	vector<float> descriptor;
 	vector<float> descriptor2;
 	Rect r3(0, 48, 64, 80);
@@ -787,7 +796,7 @@ void ChessBoard::trainKingDescriptor()
 
 void ChessBoard::trainPawnDescriptor()
 {
-	for (int i = 1; i <= 128; i++)
+	for (int i = 1; i <= 140; i++)
 	{
 		string filename = basePath + "pawn/";
 		filename += std::to_string(i);
@@ -834,7 +843,7 @@ void ChessBoard::trainPawnDescriptor()
 
 void ChessBoard::trainEmptyDescriptor()
 {
-	for (int i = 1; i <= 32; i++)
+	for (int i = 1; i <= 63; i++)
 	{
 		string filename = basePath + "empty/";
 		filename += std::to_string(i);

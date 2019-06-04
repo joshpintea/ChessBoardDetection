@@ -1714,7 +1714,7 @@ void reconstructTest(Mat img)
 	ChessBoard chessBoardUtil;
 	chessBoardUtil.train();
 	chessBoardUtil.setPoints(points);
-	chessBoardUtil.reconstructChessBoard(img, METHOD1, HOG);
+	chessBoardUtil.reconstructChessBoard(img, METHOD1, HORIZONTAL);
 	//chessBoardUtil.reconstructChessBoard(img, METHOD1, HORIZONTAL);
 	//chessBoardUtil.reconstructChessBoard(img, METHOD2, HORIZONTAL);
 	//chessBoardUtil.reconstructChessBoard(img, METHOD2, HOG);
